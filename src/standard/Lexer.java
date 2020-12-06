@@ -91,6 +91,8 @@ public class Lexer
             characterBis = scanner.readNextChar();
             if(characterBis == '/')
             {
+                while (!(TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
+                    characterBis = scanner.readNextChar();
                 characterBis = '\0';
                 return new Token(x_coor++, y_coor, "//", TokenType.COMMENT);
             }
@@ -130,7 +132,7 @@ public class Lexer
                 characterBis = scanner.readNextChar();
             }
 
-            switch (name) {
+            switch (name) {                                                                             //name musi zacczynac sie litera
                 case "var":
                     return new Token(x_coor += name.length(), y_coor, name, TokenType.VAR);
                 case "function":
@@ -155,7 +157,7 @@ public class Lexer
         {
             number = number + Character.toString(character);
             character = scanner.readNextChar();
-            if (character == '.')                                                   //TODO zastąp
+            if (character == '.')
             {
                 number = number + character;
                 characterBis = scanner.readNextChar();
@@ -164,7 +166,7 @@ public class Lexer
                     number = number + Character.toString(characterBis);
                     characterBis = scanner.readNextChar();
                 }
-                if (TokenPrefix.isSpace(characterBis) || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis))
+                if (TokenPrefix.isSpace(characterBis) || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis) || TokenPrefix.isSign(characterBis))
                     return new Token(x_coor+= number.length(), y_coor, number, TokenType.NUMBER);                           //sciezka 0.015 - dobra
                 else
                 {
@@ -182,7 +184,7 @@ public class Lexer
                 if(character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))                       // jeśli samo 0
                 {
                     characterBis = character;
-                    return new Token(x_coor++, y_coor, number.toString(), TokenType.NUMBER);                                // sciezka int x = 0 - dobra
+                    return new Token(x_coor++, y_coor, number, TokenType.NUMBER);                                // sciezka int x = 0 - dobra
                 }
                 else                                                                        //niedozwolona kombinacja
                 {
@@ -196,24 +198,25 @@ public class Lexer
                     }
                     return new Token(x_coor+= number.length(), y_coor, number, TokenType.UNKNOWN);                         // sciezka 0abc - zla
                 }
-            }                                                                          //TODO koniec do zastapienia
+            }
         }
         else if (TokenPrefix.isDigit(character))                                    //liczba zaczyna się nie zerem
         {
             number += character;
             character = scanner.readNextChar();
 
-            if (character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))
+            if (character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))                      //jedna cyfra
             {
                 characterBis = character;
-                return new Token(x_coor++, y_coor, number.toString(), TokenType.NUMBER);
+                return new Token(x_coor++, y_coor, number, TokenType.NUMBER);
             }
             else if (TokenPrefix.isDigit(character))                                    // jesli int
             {
+                number += character;
                 characterBis = scanner.readNextChar();
                 while (TokenPrefix.isDigit(characterBis))
                 {
-                    number = number + Character.toString(characterBis);
+                    number = number + characterBis;
                     characterBis = scanner.readNextChar();
                 }
 
@@ -221,7 +224,7 @@ public class Lexer
                     return new Token(x_coor++, y_coor, number.toString(), TokenType.NUMBER);                                // sciezka int x = 123 - dobra
                 else                                                                        //niedozwolona kombinacja
                 {
-                    number = number + Character.toString(characterBis);
+                    number = number + characterBis;
                     characterBis = scanner.readNextChar();
                     //return findEnd(characterBis, number);
                     while (!(TokenPrefix.isSign(characterBis) || characterBis == ' ' || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
@@ -241,14 +244,14 @@ public class Lexer
                     number = number + Character.toString(characterBis);
                     characterBis = scanner.readNextChar();
                 }
-                if (TokenPrefix.isSpace(characterBis) || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis))
+                if (TokenPrefix.isSpace(characterBis) || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis) || TokenPrefix.isSign(characterBis))
                     return new Token(x_coor+= number.length(), y_coor, number, TokenType.NUMBER);                           //sciezka 2.015 - dobra
                 else
                 {
                     //return findEnd(characterBis, number);
                     while (!(TokenPrefix.isSign(characterBis) || characterBis == ' ' || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
                     {
-                        number = number + Character.toString(characterBis);
+                        number = number + characterBis;
                         characterBis = scanner.readNextChar();
                     }
                     return new Token(x_coor+= number.length(), y_coor, number, TokenType.UNKNOWN);                         // sciezka 1.0abc - zla

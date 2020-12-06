@@ -53,7 +53,7 @@ public class TokenPrefix
     public static boolean isSign(char ch)
     {
         if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}'
-            || ch == ',' || ch == '.' || ch == ';' || ch == ':' || ch == '"' || ch == '!' || ch == '=' || ch == '&' || ch == '>' || ch == '<')
+            || ch == ',' || ch == ';' || ch == ':' || ch == '"' || ch == '!' || ch == '=' || ch == '&' || ch == '>' || ch == '<')
             return true;
         else
             return false;
