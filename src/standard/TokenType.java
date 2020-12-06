@@ -29,7 +29,7 @@ package standard;
         SEMICOLON,// ;
         SPACE, //spacja
         NUMBER,//[0..9]*[.]
-        QUOTE,// " "
+        STRING,// " message "
         EOF, // end of file
         EOL, // end of line
         UNKNOWN

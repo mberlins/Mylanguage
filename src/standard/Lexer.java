@@ -43,7 +43,7 @@ public class Lexer
         }
 
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////jednoelementowe tokeny
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jednoelementowe tokeny
         if (character == ' ')
             return new Token(x_coor++, y_coor, " ", TokenType.SPACE);                   //TODO dlaczego nie dodaje x?
         else if (character == '+' || character == '-')
@@ -75,7 +75,7 @@ public class Lexer
         else if (character == '&')
             return new Token(x_coor++, y_coor, Character.toString(character), TokenType.AND_OP);
 
-       ////////////////////////////////////////////////////////////////////////////////////////////////////////////jedno lub dwuelementowe tokeny
+       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jedno lub dwuelementowe tokeny
         else if (character == '=')
         {
             characterBis = scanner.readNextChar();
@@ -94,7 +94,7 @@ public class Lexer
                 while (!(TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
                     characterBis = scanner.readNextChar();
                 characterBis = '\0';
-                return new Token(x_coor++, y_coor, "//", TokenType.COMMENT);
+                return new Token(x_coor++, y_coor++, "//", TokenType.COMMENT);
             }
             return new Token(x_coor++, y_coor, "/", TokenType.MULTIPLICATIVE_OP);
         }
@@ -119,7 +119,7 @@ public class Lexer
             return new Token(x_coor++, y_coor, ">", TokenType.EQUAL_OP);
         }
 
-        /////////////////////                   //////////////          wczytywanie slów
+        /////////////////////                   //////////////   /////////////////////////////////////////////////////////////////////////////////////       wczytywanie slów
         if (TokenPrefix.isLetter(character))                //modyfikacja - zmienne nie mogą zaczynać się cyfrą
         {
             String name = new String();
@@ -150,7 +150,27 @@ public class Lexer
                 default: return new Token(x_coor += name.length(), y_coor, name, TokenType.NAME);
             }
         }
-        //Numbers
+        /////////////////////////////////////////////////////////////                    /////////////////////////////////////////////////////////////// Strings
+        String message = new String();
+
+        if (character == '"')
+        {
+            //message += character;
+            character = scanner.readNextChar();
+            while (!(character == '"' || TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
+            {
+                message += character;
+                character = scanner.readNextChar();
+            }
+            if (character == '"')
+                return new Token(x_coor += message.length()+2, y_coor, message, TokenType.STRING);
+            else if (TokenPrefix.isEOL(character))
+                return new Token(x_coor += message.length(), y_coor+= 0.5, message, TokenType.UNKNOWN);
+            else
+                return new Token(x_coor += message.length(), y_coor, message, TokenType.UNKNOWN);
+        }
+
+        ///////////////////////////     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Numbers
         String number = new String();
 
         if (character == '0')                                                       //liczba zaczyna się zerem
