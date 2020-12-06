@@ -1,5 +1,5 @@
 function main(){
-    var xd = 7.5 m;
+    var xd = 7.5m;
     var obama = 1.25;
     var x = "string";
     var //score = 7 / 0.15;

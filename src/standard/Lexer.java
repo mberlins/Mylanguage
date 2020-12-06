@@ -15,9 +15,12 @@ public class Lexer
     int x_coor = 0;
     double y_coor = 0;
 
-    public Lexer (String file_loc) throws FileNotFoundException
+    public Lexer (String file_loc, int i) throws FileNotFoundException
     {
-        scanner = new Skaner(file_loc);
+        if (i == 0)
+            scanner = new Skaner(file_loc, i);
+        else
+            scanner = new Skaner(file_loc);
     }
 
     public Token nextToken()

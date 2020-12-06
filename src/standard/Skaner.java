@@ -21,6 +21,12 @@ public class Skaner
         scanner.useDelimiter("");
     }
 
+    public Skaner (String message, int i)
+    {
+        scanner = new Scanner(message);
+        scanner.useDelimiter("");
+    }
+
     public char readNextChar()
     {
         if (!scanner.hasNext())
