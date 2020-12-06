@@ -6,7 +6,7 @@ public class Main
 {
     public static void main(String[] args) throws FileNotFoundException
     {
-	    Lexer lexer = new Lexer("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test4.txt");
+	    Lexer lexer = new Lexer("C:\\Users\\Admin\\IdeaProjects\\TKOM\\exampleTer.txt");
 	    Token token;
 
 	    while(true)

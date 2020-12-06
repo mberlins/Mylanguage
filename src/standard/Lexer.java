@@ -179,7 +179,9 @@ public class Lexer
             character = scanner.readNextChar();
             if (character == '.')
             {
-                number = number + character;
+                characterBis = character;
+                return afterDot(characterBis, number);
+                /*number = number + character;
                 characterBis = scanner.readNextChar();
                 while (TokenPrefix.isDigit(characterBis))
                 {
@@ -197,7 +199,7 @@ public class Lexer
                         characterBis = scanner.readNextChar();
                     }
                     return new Token(x_coor+= number.length(), y_coor, number, TokenType.UNKNOWN);                         // sciezka 0.0abc - zla
-                }
+                }*/
             }
             else
             {
@@ -242,6 +244,10 @@ public class Lexer
 
                 if(characterBis == ' ' || TokenPrefix.isSign(characterBis) || TokenPrefix.isEOF(characterBis) || TokenPrefix.isEOL(characterBis))                       // jeśli sam int
                     return new Token(x_coor++, y_coor, number.toString(), TokenType.NUMBER);                                // sciezka int x = 123 - dobra
+                else if (characterBis == '.')
+                {
+                    return afterDot(characterBis, number);
+                }
                 else                                                                        //niedozwolona kombinacja
                 {
                     number = number + characterBis;
@@ -257,7 +263,9 @@ public class Lexer
             }
             else if (character == '.')                                              // jesli double
             {
-                number = number + character;
+                characterBis = character;
+                return afterDot(characterBis, number);
+                /*number = number + character;
                 characterBis = scanner.readNextChar();
                 while (TokenPrefix.isDigit(characterBis))
                 {
@@ -275,13 +283,34 @@ public class Lexer
                         characterBis = scanner.readNextChar();
                     }
                     return new Token(x_coor+= number.length(), y_coor, number, TokenType.UNKNOWN);                         // sciezka 1.0abc - zla
-                }
+                }*/
             }
         }
         return new Token(x_coor++, y_coor, "UNKNOWN", TokenType.UNKNOWN);
     }
 
-
+    public Token afterDot(char CharacterBis, String number)
+    {
+            number = number + characterBis;
+            characterBis = scanner.readNextChar();
+            while (TokenPrefix.isDigit(characterBis))
+            {
+                number = number + Character.toString(characterBis);
+                characterBis = scanner.readNextChar();
+            }
+            if (TokenPrefix.isSpace(characterBis) || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis) || TokenPrefix.isSign(characterBis))
+                return new Token(x_coor+= number.length(), y_coor, number, TokenType.NUMBER);                           //sciezka 2.015 - dobra
+            else
+            {
+                //return findEnd(characterBis, number);
+                while (!(TokenPrefix.isSign(characterBis) || characterBis == ' ' || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
+                {
+                    number = number + characterBis;
+                    characterBis = scanner.readNextChar();
+                }
+                return new Token(x_coor+= number.length(), y_coor, number, TokenType.UNKNOWN);                         // sciezka 1.0abc - zla
+            }
+    }
     /*public Token findEnd(char ch, String number)
     {
         while (!(TokenPrefix.isSign(ch) || ch == ' ' || TokenPrefix.isEOL(ch) || TokenPrefix.isEOF(ch)))

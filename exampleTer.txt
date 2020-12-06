@@ -1,0 +1,15 @@
+function main(){
+    var xd = 7.5 m;
+    var obama = 1.25;
+
+    var score = 7 + 0.15;
+}
+function iksDe(var obama){
+    if(!obama){
+        var rumcajs = 14.56 km;
+        var czarek = 140 kg;
+        var dwaCzarki = czarek*2;
+    }
+    i = i+1;
+    iksDe(i);
+}
