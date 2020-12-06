@@ -81,7 +81,7 @@ class LexerTest {
     @Test
     void SINGLESIGNTOKENStest() throws Exception
     {
-        Lexer lexer = new Lexer("*/+-:;,", 0);
+        Lexer lexer = new Lexer("*/+-:;,()[]{}", 0);
 
         Token token = lexer.nextToken();
         assertEquals(token.getType(), TokenType.MULTIPLICATIVE_OP);
@@ -104,6 +104,25 @@ class LexerTest {
         token = lexer.nextToken();
         assertEquals(token.getType(), TokenType.COMMA);
         assertEquals(",", token.getValue());
+
+        token = lexer.nextToken();
+        assertEquals(token.getType(), TokenType.LEFT_PARENTHESIS);
+        assertEquals("(", token.getValue());
+        token = lexer.nextToken();
+        assertEquals(token.getType(), TokenType.RIGHT_PARENTHESIS);
+        assertEquals(")", token.getValue());
+        token = lexer.nextToken();
+        assertEquals(token.getType(), TokenType.LEFT_BRACKET);
+        assertEquals("[", token.getValue());
+        token = lexer.nextToken();
+        assertEquals(token.getType(), TokenType.RIGHT_BRACKET);
+        assertEquals("]", token.getValue());
+        token = lexer.nextToken();
+        assertEquals(token.getType(), TokenType.LEFT_BRACE);
+        assertEquals("{", token.getValue());
+        token = lexer.nextToken();
+        assertEquals(token.getType(), TokenType.RIGHT_BRACE);
+        assertEquals("}", token.getValue());
     }
 
     @Test
@@ -119,17 +138,22 @@ class LexerTest {
     @Test
     void EQUALtest() throws Exception
     {
-        Lexer lexer = new Lexer("==", 0);
+        Lexer lexer = new Lexer("== =", 0);
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.EQUAL_OP, token.getType());
         assertEquals("==", token.getValue());
+
+        token = lexer.nextToken();
+        token = lexer.nextToken();
+        assertEquals(TokenType.ASSIGNMENT_OP, token.getType());
+        assertEquals("=", token.getValue());
     }
 
     @Test
     void COMPAREtest() throws Exception
     {
-        Lexer lexer = new Lexer(">=<=", 0);
+        Lexer lexer = new Lexer(">=<=<>", 0);
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.COMPARE_OP, token.getType());
@@ -137,12 +161,29 @@ class LexerTest {
         token = lexer.nextToken();
         assertEquals(TokenType.COMPARE_OP, token.getType());
         assertEquals("<=", token.getValue());
+
+        token = lexer.nextToken();
+        assertEquals(TokenType.COMPARE_OP, token.getType());
+        assertEquals("<", token.getValue());
+        token = lexer.nextToken();
+        assertEquals(TokenType.COMPARE_OP, token.getType());
+        assertEquals(">", token.getValue());
+    }
+
+    @Test
+    void COMMENTtest() throws Exception
+    {
+        Lexer lexer = new Lexer("//", 0);
+
+        Token token = lexer.nextToken();
+        assertEquals(TokenType.COMMENT, token.getType());
+        assertEquals("//", token.getValue());
     }
 
     @Test
     void NUMBERtest() throws Exception
     {
-        Lexer lexer = new Lexer("0 1 1.1 0.1 11.1", 0);
+        Lexer lexer = new Lexer("0 11 1.1 0.1 11.1", 0);
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
@@ -151,7 +192,7 @@ class LexerTest {
         token = lexer.nextToken();
         token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals("1", token.getValue());
+        assertEquals("11", token.getValue());
 
         token = lexer.nextToken();
         token = lexer.nextToken();
@@ -172,7 +213,7 @@ class LexerTest {
     @Test
     void WRONGNUMBERtest() throws Exception
     {
-        Lexer lexer = new Lexer("7.5m 0m 0.1m 0m.m", 0);
+        Lexer lexer = new Lexer("7.5m 0m 0.1m 0m.m 00", 0);
         Token token = lexer.nextToken();
         assertEquals(TokenType.UNKNOWN, token.getType());
         assertEquals("7.5m", token.getValue());
@@ -191,5 +232,28 @@ class LexerTest {
         token = lexer.nextToken();
         assertEquals(TokenType.UNKNOWN, token.getType());
         assertEquals("0m.m", token.getValue());
+
+        token = lexer.nextToken();
+        token = lexer.nextToken();
+        assertEquals(TokenType.UNKNOWN, token.getType());
+        assertEquals("00", token.getValue());
+    }
+
+    @Test
+    void POSITIONtest() throws Exception
+    {
+        Lexer lexer = new Lexer("7.5m 0m 0.1m\n\r2", 0);
+        Token token = lexer.nextToken();
+        token = lexer.nextToken();
+        token = lexer.nextToken();
+        token = lexer.nextToken();
+        token = lexer.nextToken();
+        assertEquals(12, token.getX_coor());
+        assertEquals(0, token.getY_coor());
+        token = lexer.nextToken();
+        token = lexer.nextToken();
+        assertEquals(1, token.getY_coor());
+        token = lexer.nextToken();
+        assertEquals(1, token.getX_coor());
     }
 }
