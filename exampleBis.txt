@@ -1,0 +1,4 @@
+function main () 
+{
+var xd=0.15;
+};

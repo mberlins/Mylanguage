@@ -3,11 +3,11 @@ package standard;
 public class Token
 {
     private int x_coor;
-    private int y_coor;
+    private double y_coor;
     private String value;
     private TokenType type;
 
-    public Token(int x, int y, String val, TokenType type)
+    public Token(int x, double y, String val, TokenType type)
     {
         x_coor = x;
         y_coor = y;
@@ -23,11 +23,11 @@ public class Token
         this.x_coor = x_coor;
     }
 
-    public int getY_coor() {
+    public double getY_coor() {
         return y_coor;
     }
 
-    public void setY_coor(int y_coor) {
+    public void setY_coor(double y_coor) {
         this.y_coor = y_coor;
     }
 

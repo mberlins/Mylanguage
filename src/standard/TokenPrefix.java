@@ -2,9 +2,9 @@ package standard;
 
 public class TokenPrefix
 {
-    public boolean isSmallLetter(char ch)
+    public static boolean isLetter(char ch)
     {
-        if (Character.isLowerCase(ch) == true)
+        if (Character.isLetter(ch) == true || ch =='_')
             return true;
         else
             return false;
@@ -18,7 +18,7 @@ public class TokenPrefix
             return false;
     }
 
-    public boolean isDigit(char ch)
+    public static boolean isDigit(char ch)
     {
         if (Character.isDigit(ch) == true)
             return true;
@@ -26,7 +26,7 @@ public class TokenPrefix
             return false;
     }
 
-    public boolean isEOF(char ch)
+    public static boolean isEOF(char ch)
     {
         if (ch == '\u001a')
             return true;
@@ -34,7 +34,7 @@ public class TokenPrefix
             return false;
     }
 
-    public boolean isSpace(char ch)
+    public static boolean isSpace(char ch)
     {
         if (ch == ' ')
             return true;
@@ -42,7 +42,7 @@ public class TokenPrefix
             return false;
     }
 
-    public boolean isEOL(char ch)
+    public static boolean isEOL(char ch)
     {
         if(ch == '\n' || ch == '\r' /*|| ch == '\r\n'*/)
             return true;
@@ -50,7 +50,7 @@ public class TokenPrefix
             return false;
     }
 
-    public boolean isSign(char ch)
+    public static boolean isSign(char ch)
     {
         if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}'
             || ch == ',' || ch == '.' || ch == ';' || ch == ':' || ch == '"' || ch == '!' || ch == '=' || ch == '&' || ch == '>' || ch == '<')
