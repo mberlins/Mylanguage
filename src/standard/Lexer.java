@@ -14,7 +14,7 @@ public class Lexer
     //private char characterBis = '\0';
     private TokenPrefix tokenPrefix;
     int x_coor = 0;
-    double y_coor = 0;
+    int y_coor = 0;
 
     public Lexer (String file_loc) throws FileNotFoundException
     {
@@ -157,6 +157,12 @@ public class Lexer
         {
             message += character;
             character = scanner.readNextChar();
+            if(character == '\\')
+            {
+                character = scanner.readNextChar();
+                message+= character;
+                character = scanner.readNextChar();
+            }
         }
         if (character == '"')
             return new Token(x_coor += message.length()+1, y_coor, message, TokenType.STRING);

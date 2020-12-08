@@ -23,7 +23,7 @@ public class Main
                 System.out.print("   ");
                 System.out.print(token.getX_coor());
                 System.out.print("   ");
-                System.out.println((int) token.getY_coor());
+                System.out.println(token.getY_coor());
                 System.out.print("   ");
         }
     }

@@ -247,31 +247,15 @@ class LexerTest {
         assertEquals("message", token.getValue());
     }
 
-    /*@Test
-    void STRINGINSIDEtest() throws Exception
+    @Test
+    void STRINGINSIDEtest() throws Exception                                // cudzyslow w stringu obsluzony
     {
-        Lexer lexer = new Lexer("\"message\"\" " );      //dodac escapowanie symboli np jesli w stringu mamy \" to czyta jako cudzyslow
+        Lexer lexer = new Lexer("\"abc\\\"de\"" );
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.STRING, token.getType());
-        assertEquals("message", token.getValue());
-        token = lexer.nextToken();
-        assertEquals(TokenType.UNKNOWN, token.getType());
-        assertEquals("\"", token.getValue());
+        assertEquals("abc\"de", token.getValue());
     }
-
-    @Test
-    void SPACEtest() throws Exception
-    {
-        Lexer lexer = new Lexer("\t" );      // TODO wyrzucic biale znaki
-
-        Token token = lexer.nextToken();
-        assertEquals(TokenType.SPACE, token.getType());
-        assertEquals(" ", token.getValue());
-        token = lexer.nextToken();
-        assertEquals(TokenType.SPACE, token.getType());
-        assertEquals(" ", token.getValue());
-    }*/
 
     @Test
     void EQUALtest() throws Exception
