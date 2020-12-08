@@ -27,7 +27,7 @@ public class Lexer
     {
         if (characterBis != '\0')
         {
-            character = characterBis;
+            character = characterBis;                       // lista zamiast characterBis??
             characterBis = '\0';
         }
         else
@@ -42,19 +42,29 @@ public class Lexer
 
         if (TokenPrefix.isEOL(character))
         {
-            return new Token(x_coor = 0,y_coor+=0.5, "EOL", TokenType.EOL);
+            if (character == '\r')
+            {
+                ++y_coor;
+                x_coor = 0;
+            }
+            return nextToken();
         }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jednoelementowe tokeny
-        if (character == ' ')
-            return new Token(++x_coor, y_coor, " ", TokenType.SPACE);                   //TODO dlaczego nie dodaje x?
-        else if (character == '+' || character == '-')
+        if (character == ' ' || character == '\t')
+        {
+            ++x_coor;
+            return nextToken();
+        }
+        else if (character == '+' )
             return new Token(++x_coor, y_coor, Character.toString(character), TokenType.ADDITIVE_OP);
+        else if (character == '-')
+            return new Token(++x_coor, y_coor, Character.toString(character), TokenType.MINUS_OP);
         else if (character == '*')
             return new Token(++x_coor, y_coor, Character.toString(character), TokenType.MULTIPLICATIVE_OP);
         else if (character == '!')
-            return new Token(++x_coor, y_coor, Character.toString(character), TokenType.UNARY_OP);
+            return new Token(++x_coor, y_coor, Character.toString(character), TokenType.NEGATION_OP);
         else if (character == '(')
             return new Token(++x_coor, y_coor, Character.toString(character), TokenType.LEFT_PARENTHESIS);
         else if (character == ')')
@@ -186,7 +196,14 @@ public class Lexer
             }
             return new Token(++x_coor, y_coor, "=", TokenType.ASSIGNMENT_OP);
         }
-        else if (character == '/')
+        else if (character == '/')                                                              // TODO wywalic tokeny komentarza, spacji, nowej linii
+                                                                                                // Porzadne czytanie z pliku i stringa
+                                                                                                // character i character Bis zamienic na liste, albo bufor wewnerzny byle usunac linie od 28 do 36
+                                                                                                // pomijanie bialych znakow, rozbicie + i - na rozne tokeny
+                                                                                                // dodac expression do sprawka, bo nie ma
+                                                                                                // obsluge znakow specjalnych w stringach
+                                                                                                // rozbicie testow
+                                                                                                // numbera od razu zmieniac na double
         {
             characterBis = scanner.readNextChar();
             if(characterBis == '/')
@@ -194,9 +211,11 @@ public class Lexer
                 while (!(TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
                     characterBis = scanner.readNextChar();
                 characterBis = '\0';
-                return new Token(x_coor+=2, y_coor+= 0.5, "//", TokenType.COMMENT);
+
+                y_coor++;
+                return nextToken();
             }
-            return new Token(++x_coor, y_coor, "/", TokenType.MULTIPLICATIVE_OP);
+            return new Token(++x_coor, y_coor, "/", TokenType.DIVIDE_OP);
         }
         else if (character == '<')
         {
@@ -204,9 +223,9 @@ public class Lexer
             if(characterBis == '=')
             {
                 characterBis = '\0';
-                return new Token(x_coor+=2, y_coor, "<=", TokenType.COMPARE_OP);
+                return new Token(x_coor+=2, y_coor, "<=", TokenType.SMALLER_EQUAL);
             }
-            return new Token(++x_coor, y_coor, "<", TokenType.COMPARE_OP);
+            return new Token(++x_coor, y_coor, "<", TokenType.SMALLER);
         }
         else //if (character == '>')
         {
@@ -214,9 +233,9 @@ public class Lexer
             if(characterBis == '=')
             {
                 characterBis = '\0';
-                return new Token(x_coor+2, y_coor, ">=", TokenType.COMPARE_OP);
+                return new Token(x_coor+2, y_coor, ">=", TokenType.BIGGER_EQUAL);
             }
-            return new Token(++x_coor, y_coor, ">", TokenType.COMPARE_OP);
+            return new Token(++x_coor, y_coor, ">", TokenType.BIGGER);
         }
     }
     /////////////////////////////////////////////////////                               ////////////////////////////////////// szukanie numoerow

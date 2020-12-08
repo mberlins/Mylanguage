@@ -44,7 +44,7 @@ public class TokenPrefix
 
     public static boolean isEOL(char ch)
     {
-        if(ch == '\n' || ch == '\r' /*|| ch == '\r\n'*/)
+        if(ch == '\n' || ch == '\r')
             return true;
         else
             return false;

@@ -1,14 +1,19 @@
 package standard;
 
     public enum TokenType {
-        ADDITIVE_OP, //+ -
-        MULTIPLICATIVE_OP, //* /
-        UNARY_OP, // !
+        ADDITIVE_OP, //+
+        MINUS_OP,// -
+        MULTIPLICATIVE_OP, //*
+        DIVIDE_OP,// /
+        NEGATION_OP, // !
         ASSIGNMENT_OP, // =
         OR_OP, // |
         AND_OP, // &
         EQUAL_OP, // ==
-        COMPARE_OP, // < > <= >=
+        SMALLER,// <
+        BIGGER,// >
+        SMALLER_EQUAL,// <=
+        BIGGER_EQUAL,// >=
         COMMENT, // //
         RIGHT_PARENTHESIS,// )
         LEFT_PARENTHESIS,// (
@@ -27,11 +32,11 @@ package standard;
         COMMA, // ,
         COLON, // :
         SEMICOLON,// ;
-        SPACE, //spacja
+        //SPACE, //spacja
         NUMBER,//[0..9]*[.]
         STRING,// " message "
         EOF, // end of file
-        EOL, // end of line
+        //EOL, // end of line
         UNKNOWN
     }
 

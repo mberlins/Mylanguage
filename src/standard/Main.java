@@ -17,8 +17,6 @@ public class Main
             if (token.getType() == TokenType.EOF)
                 break;
 
-            if (token.getType()!=TokenType.SPACE && token.getType()!=TokenType.EOL )
-            {
                 System.out.print(token.getValue());
                 System.out.print("   ");
                 System.out.print(token.getType());
@@ -27,8 +25,6 @@ public class Main
                 System.out.print("   ");
                 System.out.println((int) token.getY_coor());
                 System.out.print("   ");
-            }
-
         }
     }
 }
