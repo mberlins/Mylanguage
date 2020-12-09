@@ -231,8 +231,8 @@ public class Lexer
                 while (!(TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
                     character = scanner.readNextChar();
                 characters.add(character);
-                y_coor++;
-                return new Token(x_coor+=2, y_coor, "//", TokenType.COMMENT);
+                //y_coor++;
+                return nextToken();
             }
             return new Token(++x_coor, y_coor, "/", TokenType.DIVIDE_OP);
         }

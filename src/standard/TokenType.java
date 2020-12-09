@@ -14,7 +14,7 @@ package standard;
         BIGGER,// >
         SMALLER_EQUAL,// <=
         BIGGER_EQUAL,// >=
-        COMMENT, // //
+        //COMMENT, // //
         RIGHT_PARENTHESIS,// )
         LEFT_PARENTHESIS,// (
         LEFT_BRACKET, // [
