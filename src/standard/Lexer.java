@@ -29,24 +29,12 @@ public class Lexer
         if (characters.size() == 0)
         {
             character = scanner.readNextChar();
-            //characters.add(character);
         }
         else
         {
             character = characters.get(characters.size()-1);
             characters.remove(characters.size()-1);
         }
-
-
-        /*if (characterBis != '\0')
-        {
-            character = characterBis;                       // lista zamiast characterBis??
-            characterBis = '\0';
-        }
-        else
-        {
-            character = scanner.readNextChar();
-        }*/
 
         if (TokenPrefix.isEOF(character))
         {
@@ -121,28 +109,37 @@ public class Lexer
         return new Token(++x_coor, y_coor, "BUG", TokenType.UNKNOWN);
     }
 ///////////////////////////////////////////////////////                         ////////////////////////////////////////// wyszukiwanie po kropce
-    public Token afterDot(char characterBis, String number)
+    public Token afterDot(char characterBis, double numberBis)
     {
-            number = number + characterBis;
+            //number = number + characterBis;
             characterBis = scanner.readNextChar();
+            ++x_coor;
+            int i = 1;
             while (TokenPrefix.isDigit(characterBis))
             {
-                number = number + characterBis;
+                //number = number + characterBis;
+                double tmp = characterBis - 48;
+                numberBis = numberBis + tmp/Math.pow(10, i);
+                i++;
+                x_coor++;
                 characterBis = scanner.readNextChar();
             }
             characters.add(characterBis);
             if (TokenPrefix.isSpace(characterBis) || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis) || TokenPrefix.isSign(characterBis))
-                return new Token(x_coor+= number.length(), y_coor, number, TokenType.NUMBER);                           //sciezka 2.015 - dobra
+                return new Token(x_coor, y_coor, numberBis, TokenType.NUMBER);                           //sciezka 2.015 - dobra
             else
             {
+                String number = String.valueOf(numberBis);
+                //int length = number.length();
                 characters.remove(characters.size()-1);
                 while (!(TokenPrefix.isSign(characterBis) || characterBis == ' ' || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
                 {
                     number = number + characterBis;
+                    ++x_coor;
                     characterBis = scanner.readNextChar();
                 }
                 characters.add(characterBis);
-                return new Token(x_coor+= number.length(), y_coor, number, TokenType.UNKNOWN);                         // sciezka 1.0abc - zla
+                return new Token(x_coor, y_coor, number, TokenType.UNKNOWN);                         // sciezka 1.0abc - zla
             }
     }
 
@@ -266,25 +263,29 @@ public class Lexer
     public Token findNumber()
     {
         String number = new String();
+        int numberBis = 0;
 
         if (character == '0')                                                       //liczba zaczyna się zerem
         {
-            number = number + character;
+            ++x_coor;
+            //number = number + character;
             character = scanner.readNextChar();
             if (character == '.')
             {
                 //characterBis = character;
-                return afterDot(character, number);
+                return afterDot(character, numberBis);
             }
             else
             {
                 if(character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))                       // jeśli samo 0
                 {
                     characters.add(character);
-                    return new Token(++x_coor, y_coor, number, TokenType.NUMBER);                                // sciezka int x = 0 - dobra
+                    return new Token(x_coor, y_coor, numberBis, TokenType.NUMBER);                                // sciezka int x = 0 - dobra
                 }
                 else                                                                        //niedozwolona kombinacja
                 {
+                    number = String.valueOf(numberBis);
+                    //int length = number.length();
                     number = number + character;
                     character = scanner.readNextChar();
                     while (!(TokenPrefix.isSign(character) || character == ' ' || TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
@@ -299,50 +300,63 @@ public class Lexer
         }
         else //if (TokenPrefix.isDigit(character))                                    //liczba zaczyna się nie zerem
         {
-            number += character;
+            int tmp = character;
+            numberBis = numberBis*10 + (tmp - 48);
+            ++x_coor;
+            //number += character;
             character = scanner.readNextChar();
 
             if (character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))                      //jedna cyfra
             {
                 characters.add(character);
-                return new Token(++x_coor, y_coor, number, TokenType.NUMBER);
+                return new Token(x_coor, y_coor, numberBis, TokenType.NUMBER);
             }
             else if (TokenPrefix.isDigit(character))                                    // jesli int
             {
-                number += character;
+                tmp = character;
+                numberBis = numberBis*10 + (tmp - 48);
+                ++x_coor;
+                //number += character;
                 character = scanner.readNextChar();
                 while (TokenPrefix.isDigit(character))
                 {
-                    number = number + character;
+                    tmp = character;
+                    numberBis = numberBis*10 + (tmp - 48);
+                    //number = number + character;
+                    ++x_coor;
                     character = scanner.readNextChar();
                 }
 
                 if(character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))                       // jeśli sam int
                 {
                     characters.add(character);
-                    return new Token(x_coor+=number.length(), y_coor, number.toString(), TokenType.NUMBER);                                // sciezka int x = 123 - dobra
+                    return new Token(x_coor, y_coor, numberBis, TokenType.NUMBER);                                // sciezka int x = 123 - dobra
                 }
                 else if (character == '.')
                 {
-                    return afterDot(character, number);
+                    return afterDot(character, numberBis);
                 }
                 else                                                                        //niedozwolona kombinacja
                 {
+                    number = String.valueOf(numberBis);
+                    //int length = number.length();
                     number = number + character;
+                    ++x_coor;
                     character = scanner.readNextChar();
                     while (!(TokenPrefix.isSign(character) || character == ' ' || TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
                     {
                         number = number + Character.toString(character);
+                        ++x_coor;
                         character = scanner.readNextChar();
                     }
                     characters.add(character);
-                    return new Token(x_coor += number.length(), y_coor, number, TokenType.UNKNOWN);                         // sciezka 123abc - zla
+                    return new Token(x_coor, y_coor, number, TokenType.UNKNOWN);                         // sciezka 123abc - zla
                 }
             }
             else //if (character == '.')                                              // jesli double
             {
                 //characterBis = character;
-                return afterDot(character, number);
+                return afterDot(character, numberBis);
             }
         }
     }

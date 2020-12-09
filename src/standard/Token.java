@@ -5,6 +5,8 @@ public class Token
     private int x_coor;
     private int y_coor;
     private String value;
+    private double numValue;
+    //private int IntValue;
     private TokenType type;
 
     public Token(int x, int y, String val, TokenType type)
@@ -14,6 +16,22 @@ public class Token
         value = val;
         this.type = type;
     }
+
+    public Token(int x, int y, double numberBis, TokenType type)
+    {
+        x_coor = x;
+        y_coor = y;
+        numValue = numberBis;
+        this.type = type;
+    }
+
+    /*public Token(int x, int y, int numberBis, TokenType type)
+    {
+        x_coor = x;
+        y_coor = y;
+        numValue = numberBis;
+        this.type = type;
+    }*/
 
     public int getX_coor() {
         return x_coor;
@@ -47,5 +65,15 @@ public class Token
         this.type = type;
     }
 
+    public double getNumValue() {
+        return numValue;
+    }
 
+    public void setNumValue(double numValue) {
+        this.numValue = numValue;
+    }
+
+    /*public int getIntValue() {
+        return IntValue;
+    }*/
 }

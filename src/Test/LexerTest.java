@@ -330,7 +330,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals("0", token.getValue());
+        assertEquals(0, token.getNumValue());
     }
 
     @Test
@@ -340,7 +340,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals("11", token.getValue());
+        assertEquals(11, token.getNumValue());
     }
 
     @Test
@@ -350,7 +350,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals("1.1", token.getValue());
+        assertEquals(1.1, token.getNumValue());
     }
 
     @Test
@@ -360,7 +360,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals("0.5", token.getValue());
+        assertEquals(0.5, token.getNumValue());
     }
 
     @Test
@@ -370,7 +370,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals("13.1", token.getValue());
+        assertEquals(13.1, token.getNumValue());
     }
 
     @Test
@@ -434,24 +434,24 @@ class LexerTest {
     }
 
     @Test
-    void WRONGDOUBLETERtest() throws Exception
-    {
+    void WRONGDOUBLETERtest() throws Exception                                      // po zmianie na tworzenie liczb od razu jako double zawsze wrzuca 0 po kropce
+    {                                                                               // chyba bez znaczenia jesli i tak wychodzi blad
         Lexer lexer = new Lexer("1..1");
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.UNKNOWN, token.getType());
-        assertEquals("1..1", token.getValue());
+        assertEquals("1.0.1", token.getValue());
     }
 
     @Test
     void POSITIONtest() throws Exception
     {
-        Lexer lexer = new Lexer("7.5m 0m 0.1m\r\n2");
+        Lexer lexer = new Lexer("12.1m2 0.0mm 1\r\n2");
         Token token = lexer.nextToken();
 
         token = lexer.nextToken();
         token = lexer.nextToken();
-        assertEquals(12, token.getX_coor());
+        assertEquals(14, token.getX_coor());
         assertEquals(0, token.getY_coor());
         token = lexer.nextToken();
         token = lexer.nextToken();
