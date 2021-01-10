@@ -340,7 +340,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals(11, token.getNumValue());
+        assertEquals(11, token.getIntValue());
     }
 
     @Test

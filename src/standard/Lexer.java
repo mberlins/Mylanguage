@@ -11,17 +11,13 @@ public class Lexer
     private TokenType type;
     private List<Character> characters = new ArrayList<>();
     private char character;
-    //private char characterBis = '\0';
     private TokenPrefix tokenPrefix;
     int x_coor = 0;
     int y_coor = 0;
 
     public Lexer (String file_loc) throws FileNotFoundException
     {
-        //if (i == 0)
             scanner = new Skaner(file_loc);
-        //else
-            //scanner = new Skaner(file_loc);
     }
 
     public Token nextToken()
@@ -48,7 +44,6 @@ public class Lexer
             x_coor = 0;
             return nextToken();
         }
-
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jednoelementowe tokeny
         if (character == ' ' || character == '\t')
@@ -117,7 +112,6 @@ public class Lexer
             int i = 1;
             while (TokenPrefix.isDigit(characterBis))
             {
-                //number = number + characterBis;
                 double tmp = characterBis - 48;
                 numberBis = numberBis + tmp/Math.pow(10, i);
                 i++;
@@ -130,7 +124,6 @@ public class Lexer
             else
             {
                 String number = String.valueOf(numberBis);
-                //int length = number.length();
                 characters.remove(characters.size()-1);
                 while (!(TokenPrefix.isSign(characterBis) || characterBis == ' ' || TokenPrefix.isEOL(characterBis) || TokenPrefix.isEOF(characterBis)))
                 {
@@ -148,7 +141,6 @@ public class Lexer
     {
         x_coor++;
         String message = new String();
-        //message += character;
         character = scanner.readNextChar();
         while (!(character == '"' || TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
         {
@@ -204,34 +196,20 @@ public class Lexer
     {
         if (character == '=')
         {
-
             character = scanner.readNextChar();
             if(character == '=')
-            {
-                //characters.remove(characters.size()-1);
                 return new Token(x_coor+=2, y_coor, "==", TokenType.EQUAL_OP);
-            }
             characters.add(character);
             return new Token(++x_coor, y_coor, "=", TokenType.ASSIGNMENT_OP);
         }
-        else if (character == '/')                                                              // TODO wywalic tokeny komentarza, spacji, nowej linii
-                                                                                                // Porzadne czytanie z pliku i stringa
-                                                                                                // character i character Bis zamienic na liste, albo bufor wewnerzny byle usunac linie od 28 do 36
-                                                                                                // pomijanie bialych znakow, rozbicie + i - na rozne tokeny
-                                                                                                // dodac expression do sprawka, bo nie ma
-                                                                                                // obsluge znakow specjalnych w stringach
-                                                                                                // rozbicie testow
-                                                                                                // numbera od razu zmieniac na double
+        else if (character == '/')
         {
-            //characters.add(character);
             character = scanner.readNextChar();
             if(character == '/')
             {
-                //characters.remove(characters.size()-1);
                 while (!(TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
                     character = scanner.readNextChar();
                 characters.add(character);
-                //y_coor++;
                 return nextToken();
             }
             return new Token(++x_coor, y_coor, "/", TokenType.DIVIDE_OP);
@@ -268,13 +246,9 @@ public class Lexer
         if (character == '0')                                                       //liczba zaczyna się zerem
         {
             ++x_coor;
-            //number = number + character;
             character = scanner.readNextChar();
             if (character == '.')
-            {
-                //characterBis = character;
                 return afterDot(character, numberBis);
-            }
             else
             {
                 if(character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))                       // jeśli samo 0
@@ -285,12 +259,11 @@ public class Lexer
                 else                                                                        //niedozwolona kombinacja
                 {
                     number = String.valueOf(numberBis);
-                    //int length = number.length();
                     number = number + character;
                     character = scanner.readNextChar();
                     while (!(TokenPrefix.isSign(character) || character == ' ' || TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
                     {
-                        number = number + Character.toString(character);
+                        number = number + character;
                         character = scanner.readNextChar();
                     }
                     characters.add(character);
@@ -303,7 +276,6 @@ public class Lexer
             int tmp = character;
             numberBis = numberBis*10 + (tmp - 48);
             ++x_coor;
-            //number += character;
             character = scanner.readNextChar();
 
             if (character == ' ' || TokenPrefix.isSign(character) || TokenPrefix.isEOF(character) || TokenPrefix.isEOL(character))                      //jedna cyfra
@@ -316,13 +288,11 @@ public class Lexer
                 tmp = character;
                 numberBis = numberBis*10 + (tmp - 48);
                 ++x_coor;
-                //number += character;
                 character = scanner.readNextChar();
                 while (TokenPrefix.isDigit(character))
                 {
                     tmp = character;
                     numberBis = numberBis*10 + (tmp - 48);
-                    //number = number + character;
                     ++x_coor;
                     character = scanner.readNextChar();
                 }
@@ -339,13 +309,12 @@ public class Lexer
                 else                                                                        //niedozwolona kombinacja
                 {
                     number = String.valueOf(numberBis);
-                    //int length = number.length();
                     number = number + character;
                     ++x_coor;
                     character = scanner.readNextChar();
                     while (!(TokenPrefix.isSign(character) || character == ' ' || TokenPrefix.isEOL(character) || TokenPrefix.isEOF(character)))
                     {
-                        number = number + Character.toString(character);
+                        number = number + character;
                         ++x_coor;
                         character = scanner.readNextChar();
                     }
@@ -354,10 +323,7 @@ public class Lexer
                 }
             }
             else //if (character == '.')                                              // jesli double
-            {
-                //characterBis = character;
                 return afterDot(character, numberBis);
-            }
         }
     }
 }
