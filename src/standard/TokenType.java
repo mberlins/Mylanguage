@@ -37,6 +37,7 @@ package standard;
         STRING,// " message "
         EOF, // end of file
         //EOL, // end of line
+        PRINT,      // sprawdzic printowanie
         UNKNOWN
     }
 

@@ -188,6 +188,8 @@ public class Lexer
                 return new Token(x_coor += name.length(), y_coor, name, TokenType.LOOP);
             case "return":
                 return new Token(x_coor += name.length(), y_coor, name, TokenType.RETURN);
+            case "print":
+                return new Token(x_coor += name.length(), y_coor, name, TokenType.PRINT);
             default: return new Token(x_coor += name.length(), y_coor, name, TokenType.NAME);
         }
     }
