@@ -57,8 +57,6 @@ public class Lexer
             return new Token(++x_coor, y_coor, Character.toString(character), TokenType.MINUS_OP);
         else if (character == '*')
             return new Token(++x_coor, y_coor, Character.toString(character), TokenType.MULTIPLICATIVE_OP);
-        else if (character == '!')
-            return new Token(++x_coor, y_coor, Character.toString(character), TokenType.NEGATION_OP);
         else if (character == '(')
             return new Token(++x_coor, y_coor, Character.toString(character), TokenType.LEFT_PARENTHESIS);
         else if (character == ')')
@@ -204,6 +202,14 @@ public class Lexer
             characters.add(character);
             return new Token(++x_coor, y_coor, "=", TokenType.ASSIGNMENT_OP);
         }
+        if (character == '!')
+        {
+            character = scanner.readNextChar();
+            if(character == '=')
+                return new Token(x_coor+=2, y_coor, "!=", TokenType.UNEQUAL_OP);
+            characters.add(character);
+            return new Token(++x_coor, y_coor, "!", TokenType.NEGATION_OP);
+        }
         else if (character == '/')
         {
             character = scanner.readNextChar();
@@ -218,7 +224,6 @@ public class Lexer
         }
         else if (character == '<')
         {
-            characters.add(character);
             character = scanner.readNextChar();
             if(character == '=')
             {
@@ -229,7 +234,6 @@ public class Lexer
         }
         else //if (character == '>')
         {
-            characters.add(character);
             character = scanner.readNextChar();
             if(character == '=')
             {

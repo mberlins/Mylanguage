@@ -10,6 +10,7 @@ package standard;
         OR_OP, // |
         AND_OP, // &
         EQUAL_OP, // ==
+        UNEQUAL_OP,
         SMALLER,// <
         BIGGER,// >
         SMALLER_EQUAL,// <=

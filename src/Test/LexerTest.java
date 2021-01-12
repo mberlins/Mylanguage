@@ -311,6 +311,22 @@ class LexerTest {
         assertEquals("<", token.getValue());
     }
 
+    @Test
+    void Xtest() throws Exception
+    {
+        Lexer lexer = new Lexer(" < x");
+
+        Token /*token = lexer.nextToken();
+        assertEquals(TokenType.NAME, token.getType());
+        assertEquals("x", token.getValue());*/
+        token = lexer.nextToken();
+        assertEquals(TokenType.SMALLER, token.getType());
+        assertEquals("<", token.getValue());
+        token = lexer.nextToken();
+        assertEquals(TokenType.NAME, token.getType());
+        assertEquals("x", token.getValue());
+    }
+
     /*@Test
     void COMMENTtest() throws Exception
     {

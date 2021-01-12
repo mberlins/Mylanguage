@@ -3,6 +3,7 @@ package parser;
 import standard.*;
 import parser.ASTnode.*;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Parser
@@ -14,6 +15,11 @@ public class Parser
     {
         this.lexer = lexer;
         this.currentToken = lexer.nextToken();
+    }
+
+    public Parser() throws FileNotFoundException {
+        lexer = new Lexer("C:\\Users\\Admin\\IdeaProjects\\TKOM\\example.txt");
+        currentToken = lexer.nextToken();
     }
 
     public AST program() throws ParserException
@@ -32,6 +38,10 @@ public class Parser
         {
             currentToken = lexer.nextToken();
             return;
+        }
+        else
+        {
+            throw new ParserException("test message");
         }
     }
 
@@ -107,53 +117,36 @@ public class Parser
     {
         AST statement;
 
-       if (currentToken.getType() == TokenType.NAME)        // todo zmienic na switcha
-       {
-           Token functionName = currentToken;
-           proceed(TokenType.NAME);
-           try{
-               proceed(TokenType.LEFT_PARENTHESIS);
-               statement = functionCallStatement(functionName);  //todo zmienic na return functionCall() etc w innych miejscach
-               return statement;
-           }
-           catch(ParserException e)
-           {
-                statement = assignmentStatement();
+        if (currentToken.getType() == TokenType.NAME)
+        {
+            Token name = currentToken;
+            proceed(TokenType.NAME);
+            try{
+                proceed(TokenType.LEFT_PARENTHESIS);
+                statement = functionCallStatement(name);  //todo zmienic na return functionCall() etc w innych miejscach
                 return statement;
-           }
-       }
-       else if (currentToken.getType() == TokenType.VAR)
-       {
-            statement = varDeclarationStatement();
+            }
+            catch(ParserException e)
+            {
+                proceed(TokenType.ASSIGNMENT_OP);
+                statement = assignmentStatement(name);
+                return statement;
+            }
+        }
+        if ((statement = varDeclarationStatement()) != null)
             return statement;
-       }
-       else if (currentToken.getType() == TokenType.DEF)
-       {
-           statement = unitDeclarationStatement();
-           return statement;
-       }
-       else if (currentToken.getType() == TokenType.IF)
-       {
-           statement = ifStatement();
-           return statement;
-       }
-       else if (currentToken.getType() == TokenType.LOOP)
-       {
-           statement = whileStatement();
-           return statement;
-       }
-       else if (currentToken.getType() == TokenType.RETURN)
-       {
-           statement = returnStatement();
-           return statement;
-       }
-       else if (currentToken.getType() == TokenType.PRINT)
-       {
-           statement = printCallStatement();
-           return statement;
-       }
+//      if ((statement = unitDeclarationStatement()) != null)
+//           return statement;
+        if ((statement = ifStatement()) != null)
+            return statement;
+        if ((statement = whileStatement()) != null)
+            return statement;
+        if ((statement = returnStatement()) != null)
+            return statement;
+        if ((statement = printCallStatement()) != null)
+            return statement;
 
-       return null; // todo tutaj chyba mozna wyrzucac blad
+        return null; // todo chyba mozna error
     }
 
     private AST functionCallStatement(Token name) throws ParserException
@@ -167,13 +160,231 @@ public class Parser
             return new FunctionCall(functionName, arguments);
         }
 
-        arguments.add(basicExpression());
+        arguments.add(additiveExpression());
         while (currentToken.getType() == TokenType.COMMA)
         {
             proceed(TokenType.COMMA);
-            arguments.add(basicExpression()); // po wyjsciu current token powinno byc comma
+            arguments.add(additiveExpression()); // po wyjsciu current token powinno byc comma
         }
         proceed(TokenType.RIGHT_PARENTHESIS);
         return new FunctionCall(functionName, arguments);
+    }
+
+    private AST assignmentStatement(Token name) throws ParserException
+    {
+        AST additiveExp;
+        additiveExp = additiveExpression();
+
+        return new Assignment(name, additiveExp);
+    }
+
+    private AST varDeclarationStatement() throws ParserException
+    {
+        if (currentToken.getType() != TokenType.NAME)
+            return null;
+
+        Token name = currentToken;
+        AST additiveExp = null;
+
+        proceed(TokenType.NAME);
+
+        if (currentToken.getType() == TokenType.ASSIGNMENT_OP)      // junior dev Daniel twierdzi, że jak stąd wyjdzie to na końcu statementa zje semicolona
+            additiveExp = additiveExpression();
+
+        return new VarDeclaration(name, additiveExp);
+    }
+
+    /*private AST unitDeclarationStatement() throws ParserException                 todo unit declaration statement
+    {
+        if (currentToken.getType() != TokenType.DEF)
+            return null;
+    }*/
+
+    private AST ifStatement() throws ParserException
+    {
+        if (currentToken.getType() != TokenType.IF)
+            return null;
+
+        AST condition, ifBody, elseBody = null;
+
+        proceed(TokenType.IF);
+        proceed(TokenType.LEFT_PARENTHESIS);
+        condition = conditionalExpression();
+        proceed(TokenType.RIGHT_PARENTHESIS);
+        ifBody = functionBody();
+        if(currentToken.getType() == TokenType.ELSE)
+        {
+            proceed(TokenType.ELSE);
+            elseBody = functionBody();
+        }
+        return new IfStatement(condition, ifBody, elseBody);
+    }
+
+    private AST whileStatement() throws ParserException
+    {
+        if (currentToken.getType() != TokenType.LOOP)
+            return null;
+
+        AST condition, whileBody;
+        proceed(TokenType.LOOP);
+        proceed(TokenType.LEFT_PARENTHESIS);
+        condition = conditionalExpression();
+        proceed(TokenType.RIGHT_PARENTHESIS);
+        whileBody = functionBody();
+        return new WhileStatement(condition, whileBody);
+    }
+
+    private AST returnStatement() throws ParserException
+    {
+        if (currentToken.getType() != TokenType.RETURN)
+            return null;
+
+        proceed(TokenType.RETURN);
+        return new ReturnStatement(assignmentStatement(currentToken));
+    }
+
+    private AST printCallStatement() throws ParserException
+    {
+        if (currentToken.getType() != TokenType.PRINT)
+            return null;
+
+        proceed(TokenType.PRINT);
+        AST printArgument = basicExpression();
+        proceed(TokenType.SEMICOLON);
+
+        return new PrintCall(printArgument);
+    }
+
+   private AST conditionalExpression() throws ParserException
+   {
+       AST node = andCondition();
+       while (currentToken.getType() == TokenType.OR_OP)
+       {
+           Token token = currentToken;
+           proceed(TokenType.OR_OP);
+           node = new BinLogicOperator(node, token, andCondition());
+       }
+       return node;
+   }
+
+   private AST andCondition() throws ParserException
+   {
+       AST node = equalityCondition();
+       while (currentToken.getType() == TokenType.AND_OP)
+       {
+           Token token = currentToken;
+           proceed(TokenType.AND_OP);
+           node = new BinLogicOperator(node, token, equalityCondition());
+       }
+       return node;
+   }
+
+   private AST equalityCondition() throws ParserException
+   {
+       AST node = relationalCondition();
+
+       while (currentToken.getType() == TokenType.EQUAL_OP || currentToken.getType() == TokenType.UNEQUAL_OP )
+       {
+           Token token = currentToken;
+           proceed(token.getType());
+           node = new BinLogicOperator(node, token, relationalCondition());
+       }
+       return node;
+   }
+
+    private AST relationalCondition() throws ParserException
+    {
+        AST node = primaryCondition();
+
+        while (currentToken.getType() == TokenType.BIGGER || currentToken.getType() == TokenType.BIGGER_EQUAL || currentToken.getType() == TokenType.SMALLER
+                || currentToken.getType() == TokenType.SMALLER_EQUAL)
+        {
+            Token token = currentToken;
+            proceed(token.getType());
+            node = new BinLogicOperator(node, token, relationalCondition());
+        }
+        return node;
+    }
+
+    private AST primaryCondition() throws ParserException
+    {
+        Token token = currentToken;
+
+        if (token.getType() == TokenType.LEFT_PARENTHESIS)
+        {
+            proceed(TokenType.LEFT_PARENTHESIS);
+            AST node = conditionalExpression();
+            proceed(TokenType.RIGHT_PARENTHESIS);
+            return node;
+        }
+        else
+        {
+            AST node = additiveExpression();
+            return node;
+        }
+    }
+
+    private AST additiveExpression() throws ParserException
+    {
+        AST node = multiplicativeExpression();
+
+        while (currentToken.getType() == TokenType.ADDITIVE_OP || currentToken.getType() == TokenType.MINUS_OP)
+        {
+            Token operator = currentToken;
+            proceed(operator.getType());
+            node = new BinOperator(node, operator, multiplicativeExpression());
+        }
+        return node;
+    }
+
+    private AST multiplicativeExpression() throws ParserException
+    {
+        AST node = basicExpression();
+
+        while (currentToken.getType() == TokenType.DIVIDE_OP || currentToken.getType() == TokenType.MULTIPLICATIVE_OP)
+        {
+            Token operator = currentToken;
+            proceed(operator.getType());
+            node = new BinOperator(node, operator, basicExpression());
+        }
+        return node;
+    }
+
+    private AST basicExpression() throws ParserException    //todo co z double?
+    {
+        Token token = currentToken;
+
+        if (token.getType() == TokenType.NUMBER)
+        {
+            proceed(TokenType.NUMBER);
+            return new NumberTest(token);
+        }
+        else if (token.getType() == TokenType.LEFT_PARENTHESIS)
+        {
+            proceed(TokenType.LEFT_PARENTHESIS);
+            AST node = additiveExpression();
+            proceed(TokenType.RIGHT_PARENTHESIS);
+            return node;
+        }
+        else if (token.getType() == TokenType.NAME)
+        {
+            token = currentToken;
+            proceed(TokenType.NAME);
+            try
+            {
+                proceed(TokenType.LEFT_PARENTHESIS);
+                return functionCallStatement(token);
+            }
+            catch (ParserException e)
+            {
+                return variable(token);
+            }
+        }
+        return null; //niech zwraca variable dodatkowa
+    }
+
+    private AST variable(Token token) throws ParserException
+    {
+        return new NumberTest(token);
     }
 }

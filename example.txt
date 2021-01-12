@@ -1,2 +1,8 @@
-;>>=a b_c12a 0.11abf 1.11abf 000 111 0abc 2abc 0.01 1.01 0 2 0.0f 1.1f 0.a*(
-)bd={}/[]==//:;==,
+function xd (hwdp , toideaulic )
+{
+    x = 2 + 2 * 2 + (7 + 1 ) ;
+    if ( (x < 10 && x ) || xd == 5 )
+    {
+        x = 10 ;
+    } ;
+}

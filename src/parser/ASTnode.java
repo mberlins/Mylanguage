@@ -85,6 +85,101 @@ public class ASTnode
         }
     }
 
+    public static class Assignment implements AST
+    {
+        Token name;
+        AST additiveExp;
+
+        Assignment(Token name, AST addExp)
+        {
+            this.name = name;
+            this.additiveExp = addExp;
+        }
+    }
+
+    public static class VarDeclaration extends Assignment
+    {
+        VarDeclaration(Token name, AST addExp) {
+            super(name, addExp);
+        }
+    }
+
+    public static class IfStatement implements AST
+    {
+        AST condition, ifBody, elseBody;
+
+        IfStatement(AST condition, AST ifBody, AST elseBody)
+        {
+            this.condition = condition;
+            this.ifBody = ifBody;
+            this.elseBody = elseBody;
+        }
+    }
+
+    public static class WhileStatement implements AST
+    {
+        AST condition, whileBody;
+
+        WhileStatement(AST condition, AST whileBody)
+        {
+            this.condition = condition;
+            this.whileBody = whileBody;
+        }
+    }
+
+    public static class ReturnStatement implements AST
+    {
+        AST retValue;
+
+        ReturnStatement(AST retValue)
+        {
+            this.retValue = retValue;
+        }
+    }
+
+    public static class PrintCall implements AST
+    {
+        AST printCall;
+
+        PrintCall(AST printCall)
+        {
+            this.printCall = printCall;
+        }
+    }
+
+    public static class BinOperator implements AST{
+        public AST right, left;
+        public Token operation;
+
+        public BinOperator(AST left, Token operation, AST right)
+        {
+            this.right = right;
+            this.left = left;
+            this.operation = operation;
+        }
+    }
+
+    public static class BinLogicOperator implements AST
+    {
+        public AST right, left;
+        public Token operation;
+
+        public BinLogicOperator(AST left, Token operation, AST right) {
+            this.right = right;
+            this.left = left;
+            this.operation = operation;
+        }
+    }
+
+    public static class NumberTest implements AST
+    {
+        Token expression;
+
+        public NumberTest(Token expression)
+        {
+            this.expression = expression;
+        }
+    }
 
 }
 
