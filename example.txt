@@ -1,6 +1,11 @@
 function xd (hwdp , toideaulic)
 {
-    x = 2 + 2 * 2 + (7 + 1 );
+    x = [2 kg];
+    def m: [LENGTH];
+    def kg: 1000 g;
+    x = 7.0;
+    y = "string";
+    x = 2 + 2 * 2 + (7 + 1);
     if ( (x < 10 && x) || xd == 5)
     {
         x = 10;

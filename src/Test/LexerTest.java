@@ -311,21 +311,6 @@ class LexerTest {
         assertEquals("<", token.getValue());
     }
 
-    @Test
-    void Xtest() throws Exception
-    {
-        Lexer lexer = new Lexer(" < x");
-
-        Token /*token = lexer.nextToken();
-        assertEquals(TokenType.NAME, token.getType());
-        assertEquals("x", token.getValue());*/
-        token = lexer.nextToken();
-        assertEquals(TokenType.SMALLER, token.getType());
-        assertEquals("<", token.getValue());
-        token = lexer.nextToken();
-        assertEquals(TokenType.NAME, token.getType());
-        assertEquals("x", token.getValue());
-    }
 
     /*@Test
     void COMMENTtest() throws Exception
@@ -346,7 +331,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals(0, token.getNumValue());
+        assertEquals(0, token.getDoubleValue());
     }
 
     @Test
@@ -366,7 +351,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals(1.1, token.getNumValue());
+        assertEquals(1.1, token.getDoubleValue());
     }
 
     @Test
@@ -376,7 +361,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals(0.5, token.getNumValue());
+        assertEquals(0.5, token.getDoubleValue());
     }
 
     @Test
@@ -386,7 +371,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals(13.1, token.getNumValue());
+        assertEquals(13.1, token.getDoubleValue());
     }
 
     @Test

@@ -88,12 +88,12 @@ public class ASTnode
     public static class Assignment implements AST
     {
         Token name;
-        AST additiveExp;
+        AST assignmentValue;
 
         Assignment(Token name, AST addExp)
         {
             this.name = name;
-            this.additiveExp = addExp;
+            this.assignmentValue = addExp;
         }
     }
 
@@ -178,6 +178,65 @@ public class ASTnode
         public NumberTest(Token expression)
         {
             this.expression = expression;
+        }
+    }
+
+    public static class IntNum implements AST
+    {
+        Integer value;
+        IntNum(Token token)
+        {
+            this.value = token.getIntValue();
+        }
+    }
+
+    public static class DoubleNum implements AST
+    {
+        Double value;
+        DoubleNum(Token token)
+        {
+            this.value = token.getDoubleValue();
+        }
+    }
+
+    public static class StringVar implements AST
+    {
+        String value;
+        StringVar(Token token)
+        {
+            this.value = token.getValue();
+        }
+    }
+
+    public static class Unit implements AST
+    {
+        Token name;
+        Token number;
+        Token parentName;
+
+        Unit(Token name, Token number, Token parent)
+        {
+            this.name = name;
+            this.number = number;
+            this.parentName = parent;
+        }
+
+        Unit(Token name, Token number)
+        {
+            this.name = name;
+            this.number = number;
+        }
+    }
+
+    public static class BaseUnit implements AST
+    {
+        Token name;
+        Token unitField;
+
+        BaseUnit(Token name, Token unitField)
+        {
+            this.name = name;
+            this.unitField = unitField;
         }
     }
 

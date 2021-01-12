@@ -39,10 +39,10 @@ public class Parser
             currentToken = lexer.nextToken();
             return;
         }
+        else if (currentToken.getType() == TokenType.UNKNOWN)
+            throw new ParserException("Unsupported type");
         else
-        {
-            throw new ParserException("test message");
-        }
+            throw new ParserException("Expected other Token type");
     }
 
     private AST function() throws ParserException
@@ -51,9 +51,8 @@ public class Parser
         if (currentToken.getType() == TokenType.FUNCTION)
             proceed(type.getType());
         else
-        {
-            //todo errors
-        }
+            throw new ParserException("Expected other Token type");
+
         Token name = currentToken;
         proceed(TokenType.NAME);
         AST paramList = paramList();
@@ -82,10 +81,7 @@ public class Parser
             token = currentToken;
             if(token.getType() == TokenType.NAME)
                 proceed(TokenType.NAME);
-            else
-            {
-                // todo error
-            }
+
             functionParameters.add(new Parameter(new Variable(token)));
         }
         proceed(TokenType.RIGHT_PARENTHESIS);
@@ -97,7 +93,6 @@ public class Parser
         proceed(TokenType.LEFT_BRACE);
         ArrayList<AST> statements = statementList();
         proceed(TokenType.RIGHT_BRACE);
-        // AST root = new functionBody(statements) - czy zwrocic
         return new FunctionBody(statements);
     }
 
@@ -110,6 +105,7 @@ public class Parser
             statements.add(statement());
             proceed(TokenType.SEMICOLON);
         }
+
         return statements;
     }
 
@@ -135,8 +131,8 @@ public class Parser
         }
         if ((statement = varDeclarationStatement()) != null)
             return statement;
-//      if ((statement = unitDeclarationStatement()) != null)
-//           return statement;
+        if ((statement = unitDeclarationStatement()) != null)
+            return statement;
         if ((statement = ifStatement()) != null)
             return statement;
         if ((statement = whileStatement()) != null)
@@ -194,11 +190,40 @@ public class Parser
         return new VarDeclaration(name, additiveExp);
     }
 
-    /*private AST unitDeclarationStatement() throws ParserException                 todo unit declaration statement
+    private AST unitDeclarationStatement() throws ParserException                 //todo unit declaration statement
     {
         if (currentToken.getType() != TokenType.DEF)
             return null;
-    }*/
+
+        Token name, unitField, multiplicity, parentName;
+
+        proceed(TokenType.DEF);
+        name = currentToken;
+        proceed(TokenType.NAME);
+        proceed(TokenType.COLON);
+
+        if(currentToken.getType() == TokenType.NUMBER)
+        {
+            multiplicity = currentToken;
+            proceed(TokenType.NUMBER);
+            //proceed(TokenType.LEFT_BRACKET);
+            parentName = currentToken;
+            proceed(TokenType.NAME);
+            //proceed(TokenType.RIGHT_BRACKET);
+            //proceed(TokenType.SEMICOLON);
+            return new Unit(name, multiplicity, parentName);
+        }
+        else if (currentToken.getType() == TokenType.LEFT_BRACKET )
+        {
+            proceed(TokenType.LEFT_BRACKET);
+            unitField = currentToken;
+            proceed(TokenType.NAME);
+            proceed(TokenType.RIGHT_BRACKET);
+            //proceed(TokenType.SEMICOLON);
+            return new BaseUnit(name, unitField);
+        }
+        return null;
+    }
 
     private AST ifStatement() throws ParserException
     {
@@ -353,11 +378,18 @@ public class Parser
     private AST basicExpression() throws ParserException    //todo co z double?
     {
         Token token = currentToken;
-
+        AST leaf;
+        if ((leaf = isUnit(token)) != null)
+            return leaf;
         if (token.getType() == TokenType.NUMBER)
         {
             proceed(TokenType.NUMBER);
-            return new NumberTest(token);
+            return leaf = intOrDouble(token);
+        }
+        else if (token.getType() == TokenType.STRING)
+        {
+            proceed(TokenType.STRING);
+            return new StringVar(token);
         }
         else if (token.getType() == TokenType.LEFT_PARENTHESIS)
         {
@@ -383,8 +415,35 @@ public class Parser
         return null; //niech zwraca variable dodatkowa
     }
 
+    private AST intOrDouble(Token token) throws ParserException
+    {
+        AST node;
+
+        if(token.getIntValue() != Integer.MIN_VALUE)
+            return node = new IntNum(token);
+        else if (token.getDoubleValue() != Double.MIN_VALUE)
+            return node = new DoubleNum(token);
+
+        return null;
+    }
+
+    private AST isUnit(Token token) throws ParserException
+    {
+        if (currentToken.getType() != TokenType.LEFT_BRACKET)
+            return null;
+        Token number, name;
+        proceed(TokenType.LEFT_BRACKET);
+        number = currentToken;
+        proceed(TokenType.NUMBER);
+        name = currentToken;
+        proceed(TokenType.NAME);
+        proceed(TokenType.RIGHT_BRACKET);
+
+        return new Unit(number, name);
+    }
+
     private AST variable(Token token) throws ParserException
     {
-        return new NumberTest(token);
+        return new Variable(token);
     }
 }

@@ -5,8 +5,8 @@ public class Token
     private int x_coor;
     private int y_coor;
     private String value;
-    private double numValue;
-    private int intValue;
+    private Double doubleValue;
+    private Integer intValue;
     private TokenType type;
 
     public Token(int x, int y, String val, TokenType type)
@@ -17,11 +17,12 @@ public class Token
         this.type = type;
     }
 
-    public Token(int x, int y, double numberBis, TokenType type)
+    public Token(int x, int y, Double numberBis, TokenType type)
     {
         x_coor = x;
         y_coor = y;
-        numValue = numberBis;
+        doubleValue = numberBis;
+        intValue = Integer.MIN_VALUE;
         this.type = type;
     }
 
@@ -29,6 +30,7 @@ public class Token
     {
         x_coor = x;
         y_coor = y;
+        doubleValue = Double.MIN_VALUE;
         intValue = numberBis;
         this.type = type;
     }
@@ -65,12 +67,12 @@ public class Token
         this.type = type;
     }
 
-    public double getNumValue() {
-        return numValue;
+    public double getDoubleValue() {
+        return doubleValue;
     }
 
-    public void setNumValue(double numValue) {
-        this.numValue = numValue;
+    public void setDoubleValue(double numValue) {
+        this.doubleValue = numValue;
     }
 
     public int getIntValue() {
