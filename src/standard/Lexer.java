@@ -15,6 +15,10 @@ public class Lexer
     int x_coor = 0;
     int y_coor = 0;
 
+    public List<Character> peekCharacters() {
+        return characters;
+    }
+
     public Lexer (String file_loc) throws FileNotFoundException
     {
             scanner = new Skaner(file_loc);
@@ -23,19 +27,15 @@ public class Lexer
     public Token nextToken()
     {
         if (characters.size() == 0)
-        {
             character = scanner.readNextChar();
-        }
         else
         {
-            character = characters.get(characters.size()-1);
-            characters.remove(characters.size()-1);
+            character = characters.get(0);
+            characters.remove(0);
         }
 
         if (TokenPrefix.isEOF(character))
-        {
-           return new Token(x_coor,y_coor, "EOF", TokenType.EOF);
-        }
+            return new Token(x_coor,y_coor, "EOF", TokenType.EOF);
 
         if (TokenPrefix.isEOL(character))
         {

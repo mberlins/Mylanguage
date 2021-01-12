@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Parser
 {
     Lexer lexer;
-    Token currentToken;                 // todo przyjrzyj sie astParse
+    Token currentToken;
 
     public Parser(Lexer lexer)
     {
@@ -113,22 +113,10 @@ public class Parser
     {
         AST statement;
 
-        if (currentToken.getType() == TokenType.NAME)
-        {
-            Token name = currentToken;
-            proceed(TokenType.NAME);
-            try{
-                proceed(TokenType.LEFT_PARENTHESIS);
-                statement = functionCallStatement(name);  //todo zmienic na return functionCall() etc w innych miejscach
-                return statement;
-            }
-            catch(ParserException e)
-            {
-                proceed(TokenType.ASSIGNMENT_OP);
-                statement = assignmentStatement(name);
-                return statement;
-            }
-        }
+        if ((statement = functionCallStatement()) != null)
+            return statement;
+        if ((statement = assignmentStatement()) != null)
+            return statement;
         if ((statement = varDeclarationStatement()) != null)
             return statement;
         if ((statement = unitDeclarationStatement()) != null)
@@ -145,9 +133,13 @@ public class Parser
         return null; // todo chyba mozna error
     }
 
-    private AST functionCallStatement(Token name) throws ParserException
+    private AST functionCallStatement(/*Token name*/) throws ParserException
     {
-        Token functionName = name;
+        ArrayList<Character> waitingList = (ArrayList<Character>) lexer.peekCharacters();
+        if (currentToken.getType() != TokenType.NAME || waitingList.get(0) != '(')
+            return null;
+
+        Token functionName = currentToken;
         ArrayList<AST> arguments = new ArrayList<AST>();
 
         if(currentToken.getType() == TokenType.RIGHT_PARENTHESIS)
@@ -166,10 +158,15 @@ public class Parser
         return new FunctionCall(functionName, arguments);
     }
 
-    private AST assignmentStatement(Token name) throws ParserException
+    private AST assignmentStatement() throws ParserException
     {
-        AST additiveExp;
-        additiveExp = additiveExpression();
+        if (currentToken.getType() != TokenType.NAME)
+            return null;
+
+        Token name = currentToken;
+        proceed(TokenType.NAME);
+        proceed(TokenType.ASSIGNMENT_OP);
+        AST additiveExp = additiveExpression();
 
         return new Assignment(name, additiveExp);
     }
@@ -184,13 +181,13 @@ public class Parser
 
         proceed(TokenType.NAME);
 
-        if (currentToken.getType() == TokenType.ASSIGNMENT_OP)      // junior dev Daniel twierdzi, że jak stąd wyjdzie to na końcu statementa zje semicolona
+        if (currentToken.getType() == TokenType.ASSIGNMENT_OP)
             additiveExp = additiveExpression();
 
         return new VarDeclaration(name, additiveExp);
     }
 
-    private AST unitDeclarationStatement() throws ParserException                 //todo unit declaration statement
+    private AST unitDeclarationStatement() throws ParserException
     {
         if (currentToken.getType() != TokenType.DEF)
             return null;
@@ -206,11 +203,8 @@ public class Parser
         {
             multiplicity = currentToken;
             proceed(TokenType.NUMBER);
-            //proceed(TokenType.LEFT_BRACKET);
             parentName = currentToken;
             proceed(TokenType.NAME);
-            //proceed(TokenType.RIGHT_BRACKET);
-            //proceed(TokenType.SEMICOLON);
             return new Unit(name, multiplicity, parentName);
         }
         else if (currentToken.getType() == TokenType.LEFT_BRACKET )
@@ -219,7 +213,6 @@ public class Parser
             unitField = currentToken;
             proceed(TokenType.NAME);
             proceed(TokenType.RIGHT_BRACKET);
-            //proceed(TokenType.SEMICOLON);
             return new BaseUnit(name, unitField);
         }
         return null;
@@ -265,7 +258,7 @@ public class Parser
             return null;
 
         proceed(TokenType.RETURN);
-        return new ReturnStatement(assignmentStatement(currentToken));
+        return new ReturnStatement(assignmentStatement());
     }
 
     private AST printCallStatement() throws ParserException
@@ -405,7 +398,7 @@ public class Parser
             try
             {
                 proceed(TokenType.LEFT_PARENTHESIS);
-                return functionCallStatement(token);
+                return functionCallStatement();
             }
             catch (ParserException e)
             {
