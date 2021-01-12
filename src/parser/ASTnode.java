@@ -87,20 +87,25 @@ public class ASTnode
 
     public static class Assignment implements AST
     {
-        Token name;
+        AST variable;
         AST assignmentValue;
 
-        Assignment(Token name, AST addExp)
+        Assignment(AST var, AST addExp)
         {
-            this.name = name;
+            this.variable = var;
             this.assignmentValue = addExp;
         }
     }
 
-    public static class VarDeclaration extends Assignment
+    public static class VarDeclaration implements AST
     {
-        VarDeclaration(Token name, AST addExp) {
-            super(name, addExp);
+        Token name;
+        AST assignmentValue;
+
+        VarDeclaration(Token name, AST addExp)
+        {
+            this.name = name;
+            this.assignmentValue = addExp;
         }
     }
 

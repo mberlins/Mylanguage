@@ -40,7 +40,7 @@ public class Main
         }
         catch (ParserException e)
         {
-            System.out.println("Error");
+            System.out.println(e);
         }
 
     }

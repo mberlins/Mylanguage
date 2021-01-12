@@ -2,8 +2,21 @@ package parser;
 
 public class ParserException extends Exception
 {
-    public ParserException(String message)
+    String message;
+    int position;
+    double line;
+
+    public ParserException(){};
+    public ParserException(String message, int position, int line)
     {
-        super(message);
+        this.message = message;
+        this.line = line;
+        this.position = position;
+    }
+
+    @Override
+    public String toString()
+    {
+        return (message + " at line: " + line + ", position: " + position);
     }
 }

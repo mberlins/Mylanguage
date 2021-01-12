@@ -34,15 +34,16 @@ public class Parser
 
     private void proceed(TokenType type) throws ParserException
     {
+
         if (currentToken.getType() == type)
         {
             currentToken = lexer.nextToken();
             return;
         }
         else if (currentToken.getType() == TokenType.UNKNOWN)
-            throw new ParserException("Unsupported type");
+            throw new ParserException("Unsupported type", currentToken.getX_coor(), currentToken.getY_coor());
         else
-            throw new ParserException("Expected other Token type");
+            throw new ParserException("Expected other Token type", currentToken.getX_coor(), currentToken.getY_coor());
     }
 
     private AST function() throws ParserException
@@ -51,7 +52,7 @@ public class Parser
         if (currentToken.getType() == TokenType.FUNCTION)
             proceed(type.getType());
         else
-            throw new ParserException("Expected other Token type");
+            throw new ParserException("Expected wrong Token type", currentToken.getX_coor(), currentToken.getY_coor());
 
         Token name = currentToken;
         proceed(TokenType.NAME);
@@ -80,9 +81,10 @@ public class Parser
             proceed(TokenType.COMMA);
             token = currentToken;
             if(token.getType() == TokenType.NAME)
+            {
+                functionParameters.add(new Parameter(new Variable(token)));
                 proceed(TokenType.NAME);
-
-            functionParameters.add(new Parameter(new Variable(token)));
+            }
         }
         proceed(TokenType.RIGHT_PARENTHESIS);
         return new ParamList(functionParameters);
@@ -96,7 +98,7 @@ public class Parser
         return new FunctionBody(statements);
     }
 
-    private ArrayList<AST> statementList() throws ParserException  // todo wrzucic to do function block
+    private ArrayList<AST> statementList() throws ParserException
     {
         ArrayList<AST> statements = new ArrayList<AST>();
 
@@ -117,29 +119,31 @@ public class Parser
             return statement;
         if ((statement = assignmentStatement()) != null)
             return statement;
-        if ((statement = varDeclarationStatement()) != null)
+        else if ((statement = varDeclarationStatement()) != null)
             return statement;
-        if ((statement = unitDeclarationStatement()) != null)
+        else if ((statement = unitDeclarationStatement()) != null)
             return statement;
-        if ((statement = ifStatement()) != null)
+        else if ((statement = ifStatement()) != null)
             return statement;
-        if ((statement = whileStatement()) != null)
+        else if ((statement = whileStatement()) != null)
             return statement;
-        if ((statement = returnStatement()) != null)
+        else if ((statement = returnStatement()) != null)
             return statement;
-        if ((statement = printCallStatement()) != null)
+        else if ((statement = printCallStatement()) != null)
             return statement;
 
         return null; // todo chyba mozna error
     }
 
-    private AST functionCallStatement(/*Token name*/) throws ParserException
+    private AST functionCallStatement() throws ParserException
     {
         ArrayList<Character> waitingList = (ArrayList<Character>) lexer.peekCharacters();
         if (currentToken.getType() != TokenType.NAME || waitingList.get(0) != '(')
             return null;
 
         Token functionName = currentToken;
+        proceed(TokenType.NAME);
+        proceed(TokenType.LEFT_PARENTHESIS);
         ArrayList<AST> arguments = new ArrayList<AST>();
 
         if(currentToken.getType() == TokenType.RIGHT_PARENTHESIS)
@@ -164,16 +168,17 @@ public class Parser
             return null;
 
         Token name = currentToken;
-        proceed(TokenType.NAME);
+        //proceed(TokenType.NAME);
+        AST var = variable();
         proceed(TokenType.ASSIGNMENT_OP);
         AST additiveExp = additiveExpression();
 
-        return new Assignment(name, additiveExp);
+        return new Assignment(var, additiveExp);
     }
 
     private AST varDeclarationStatement() throws ParserException
     {
-        if (currentToken.getType() != TokenType.NAME)
+        if (currentToken.getType() != TokenType.VAR)
             return null;
 
         Token name = currentToken;
@@ -258,7 +263,7 @@ public class Parser
             return null;
 
         proceed(TokenType.RETURN);
-        return new ReturnStatement(assignmentStatement());
+        return new ReturnStatement(additiveExpression());
     }
 
     private AST printCallStatement() throws ParserException
@@ -267,7 +272,7 @@ public class Parser
             return null;
 
         proceed(TokenType.PRINT);
-        AST printArgument = basicExpression();
+        AST printArgument = additiveExpression();
         proceed(TokenType.SEMICOLON);
 
         return new PrintCall(printArgument);
@@ -371,10 +376,10 @@ public class Parser
     private AST basicExpression() throws ParserException    //todo co z double?
     {
         Token token = currentToken;
-        AST leaf;
-        if ((leaf = isUnit(token)) != null)
+        AST leaf = null;
+        if ((leaf = isUnit()) != null)
             return leaf;
-        if (token.getType() == TokenType.NUMBER)
+        if (currentToken.getType() == TokenType.NUMBER)
         {
             proceed(TokenType.NUMBER);
             return leaf = intOrDouble(token);
@@ -391,21 +396,10 @@ public class Parser
             proceed(TokenType.RIGHT_PARENTHESIS);
             return node;
         }
-        else if (token.getType() == TokenType.NAME)
-        {
-            token = currentToken;
-            proceed(TokenType.NAME);
-            try
-            {
-                proceed(TokenType.LEFT_PARENTHESIS);
-                return functionCallStatement();
-            }
-            catch (ParserException e)
-            {
-                return variable(token);
-            }
-        }
-        return null; //niech zwraca variable dodatkowa
+        else if ((leaf = functionCallStatement()) != null)
+            return leaf;
+
+        return variable();
     }
 
     private AST intOrDouble(Token token) throws ParserException
@@ -420,7 +414,7 @@ public class Parser
         return null;
     }
 
-    private AST isUnit(Token token) throws ParserException
+    private AST isUnit() throws ParserException
     {
         if (currentToken.getType() != TokenType.LEFT_BRACKET)
             return null;
@@ -435,8 +429,10 @@ public class Parser
         return new Unit(number, name);
     }
 
-    private AST variable(Token token) throws ParserException
+    private AST variable() throws ParserException
     {
-        return new Variable(token);
+        AST var = new Variable(currentToken);
+        proceed(TokenType.NAME);
+        return var;
     }
 }
