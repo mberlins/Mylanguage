@@ -1,8 +1,8 @@
-function xd (hwdp , toideaulic )
+function xd (hwdp , toideaulic)
 {
-    x = 2 + 2 * 2 + (7 + 1 ) ;
-    if ( (x < 10 && x ) || xd == 5 )
+    x = 2 + 2 * 2 + (7 + 1 );
+    if ( (x < 10 && x) || xd == 5)
     {
-        x = 10 ;
-    } ;
+        x = 10;
+    };
 }

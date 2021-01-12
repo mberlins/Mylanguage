@@ -170,6 +170,7 @@ public class Lexer
             name += Character.toString(character);
             character = scanner.readNextChar();
         }
+        characters.add(character);
 
         switch (name) {                                                                             //name musi zaczynac sie litera
             case "var":
