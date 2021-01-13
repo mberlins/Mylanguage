@@ -247,7 +247,8 @@ public class ASTnode
         public AST right, left;
         public Token operation;
 
-        public BinLogicOperator(AST left, Token operation, AST right) {
+        public BinLogicOperator(AST left, Token operation, AST right)
+        {
             this.right = right;
             this.left = left;
             this.operation = operation;
@@ -266,16 +267,20 @@ public class ASTnode
         }
     }
 
-    public static class NumberTest implements AST
+    public static class UnOperator implements AST
     {
-        Token expression;
-
-        public NumberTest(Token expression)
+        Token token;
+        AST expression;
+        public UnOperator(Token token, AST expression)
         {
+            this.token = token ;
             this.expression = expression;
         }
 
-        public Token getExpression() {
+        public String getType(){
+            return token.getValue();
+        }
+        public AST getExpression(){
             return expression;
         }
     }

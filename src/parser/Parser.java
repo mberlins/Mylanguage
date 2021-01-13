@@ -384,6 +384,16 @@ public class Parser
         AST leaf = null;
         if ((leaf = isUnit()) != null)
             return leaf;
+        if (token.getType() == TokenType.MINUS_OP)
+        {
+            proceed(TokenType.MINUS_OP);
+            return new UnOperator(token, basicExpression());
+        }
+        if (token.getType() == TokenType.ADDITIVE_OP)
+        {
+            proceed(TokenType.ADDITIVE_OP);
+            return new UnOperator(token, basicExpression());
+        }
         if (currentToken.getType() == TokenType.NUMBER)
         {
             proceed(TokenType.NUMBER);
