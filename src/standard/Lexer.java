@@ -1,5 +1,6 @@
 package standard;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,14 @@ public class Lexer
         return characters;
     }
 
-    public Lexer (String file_loc) throws FileNotFoundException
+    public Lexer (File file) throws FileNotFoundException
     {
-            scanner = new Skaner(file_loc);
+            scanner = new Skaner(file);
+    }
+
+    public Lexer (String code)
+    {
+        scanner = new Skaner(code);
     }
 
     public Token nextToken()
@@ -81,7 +87,7 @@ public class Lexer
             return new Token(++x_coor, y_coor, Character.toString(character), TokenType.AND_OP);
 
        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jedno lub dwuelementowe tokeny
-        else if (character == '=' || character == '/' || character == '<' || character == '>')
+        else if (character == '=' || character == '/' || character == '<' || character == '>' || character == '!')
             return findDoubleToken();
 
         /////////////////////                   //////////////   /////////////////////////////////////////////////////////////////////////////////////       wczytywanie slów
@@ -227,20 +233,16 @@ public class Lexer
         {
             character = scanner.readNextChar();
             if(character == '=')
-            {
-                characters.remove(characters.size()-1);
                 return new Token(x_coor+=2, y_coor, "<=", TokenType.SMALLER_EQUAL);
-            }
+            characters.add(character);
             return new Token(++x_coor, y_coor, "<", TokenType.SMALLER);
         }
         else //if (character == '>')
         {
             character = scanner.readNextChar();
             if(character == '=')
-            {
-                characters.remove(characters.size()-1);
                 return new Token(x_coor+2, y_coor, ">=", TokenType.BIGGER_EQUAL);
-            }
+            characters.add(character);
             return new Token(++x_coor, y_coor, ">", TokenType.BIGGER);
         }
     }

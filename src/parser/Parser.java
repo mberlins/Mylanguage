@@ -3,6 +3,7 @@ package parser;
 import standard.*;
 import parser.ASTnode.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
@@ -11,14 +12,13 @@ public class Parser
     Lexer lexer;
     Token currentToken;
 
-    public Parser(Lexer lexer)
-    {
-        this.lexer = lexer;
-        this.currentToken = lexer.nextToken();
+    public Parser(File file) throws FileNotFoundException {
+        lexer = new Lexer(file);
+        currentToken = lexer.nextToken();
     }
 
-    public Parser() throws FileNotFoundException {
-        lexer = new Lexer("C:\\Users\\Admin\\IdeaProjects\\TKOM\\example.txt");
+    public Parser(String code) {
+        lexer = new Lexer(code);
         currentToken = lexer.nextToken();
     }
 
@@ -74,7 +74,7 @@ public class Parser
         Token token = currentToken;
         proceed(TokenType.NAME);
         ArrayList<AST> functionParameters = new ArrayList<AST>();
-        functionParameters.add(new Parameter(new Variable(token)));
+        functionParameters.add(new Variable(token));
 
         while(currentToken.getType() == TokenType.COMMA)
         {
@@ -82,7 +82,7 @@ public class Parser
             token = currentToken;
             if(token.getType() == TokenType.NAME)
             {
-                functionParameters.add(new Parameter(new Variable(token)));
+                functionParameters.add(new Variable(token));
                 proceed(TokenType.NAME);
             }
         }
@@ -132,7 +132,7 @@ public class Parser
         else if ((statement = printCallStatement()) != null)
             return statement;
 
-        return null; // todo chyba mozna error
+        return null;
     }
 
     private AST functionCallStatement() throws ParserException
@@ -181,13 +181,18 @@ public class Parser
         if (currentToken.getType() != TokenType.VAR)
             return null;
 
+        proceed(TokenType.VAR);
         Token name = currentToken;
         AST additiveExp = null;
 
         proceed(TokenType.NAME);
 
         if (currentToken.getType() == TokenType.ASSIGNMENT_OP)
+        {
+            proceed(TokenType.ASSIGNMENT_OP);
             additiveExp = additiveExpression();
+        }
+
 
         return new VarDeclaration(name, additiveExp);
     }
@@ -373,7 +378,7 @@ public class Parser
         return node;
     }
 
-    private AST basicExpression() throws ParserException    //todo co z double?
+    private AST basicExpression() throws ParserException
     {
         Token token = currentToken;
         AST leaf = null;

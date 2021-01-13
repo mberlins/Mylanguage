@@ -1,6 +1,6 @@
-function xd (abc , toideaulic)
+function fun (abc, efg)
 {
-    x = [2 kg];
+    var x = [2 kg];
     def m: [LENGTH];
     def kg: 1000 g;
     xd();
@@ -10,6 +10,10 @@ function xd (abc , toideaulic)
     if ( (x < 10 & x) | xd == 5)
     {
         x = 10;
+    }
+    else
+    {
+        x = 4;
     };
 
     return 5;

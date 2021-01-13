@@ -14,28 +14,17 @@ public class Skaner
         return buffer;
     }
 
-    public Skaner (String file_loc)
-    {
-        try
-        {
-            code = new File(file_loc);
-            scanner = new Scanner(code);
-            scanner.useDelimiter("");
-        }
-        catch (FileNotFoundException e)
-        {
-            scanner = new Scanner(file_loc);
-            scanner.useDelimiter("");
-            //e.printStackTrace();
-        }
-
+    public Skaner (File file) throws FileNotFoundException {
+        code = file;
+        scanner = new Scanner(code);
+        scanner.useDelimiter("");
     }
 
-    /*public Skaner (String message, int i)
+    public Skaner (String code)
     {
-        scanner = new Scanner(message);
+        scanner = new Scanner(code);
         scanner.useDelimiter("");
-    }*/
+    }
 
     public char readNextChar()
     {

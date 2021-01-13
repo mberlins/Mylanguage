@@ -3,6 +3,7 @@ package standard;
 import parser.Parser;
 import parser.ParserException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Main
@@ -32,7 +33,8 @@ public class Main
 
         }*/
 
-        Parser parser = new Parser();
+        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\example.txt");
+        Parser parser = new Parser(file);
 
         try
         {

@@ -311,19 +311,6 @@ class LexerTest {
         assertEquals("<", token.getValue());
     }
 
-
-    /*@Test
-    void COMMENTtest() throws Exception
-    {
-        Lexer lexer = new Lexer("//");
-
-        Token token = lexer.nextToken();
-        assertEquals(TokenType.COMMENT, token.getType());
-        assertEquals("//", token.getValue());
-    }*/
-
-
-
     @Test
     void ZEROtest() throws Exception
     {
@@ -331,7 +318,7 @@ class LexerTest {
 
         Token token = lexer.nextToken();
         assertEquals(TokenType.NUMBER, token.getType());
-        assertEquals(0, token.getDoubleValue());
+        assertEquals(0, token.getIntValue());
     }
 
     @Test

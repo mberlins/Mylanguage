@@ -1,7 +1,6 @@
 package parser;
 
 import standard.Token;
-import standard.TokenType;
 
 import java.util.ArrayList;
 
@@ -25,11 +24,23 @@ public class ASTnode
         AST paramList;
         AST functionBody;
 
-        FunctionDef(Token name, AST paramList, AST functionBody)
+        public FunctionDef(Token name, AST paramList, AST functionBody)
         {
             this.name = name;
             this.paramList = paramList;
             this.functionBody = functionBody;
+        }
+
+        public Token getName() {
+            return name;
+        }
+
+        public AST getParamList() {
+            return paramList;
+        }
+
+        public AST getFunctionBody() {
+            return functionBody;
         }
     }
 
@@ -41,6 +52,10 @@ public class ASTnode
         {
             this.names = names;
         }
+
+        public ArrayList<AST> getNames() {
+            return names;
+        }
     }
 
     public static class FunctionBody implements AST
@@ -51,15 +66,9 @@ public class ASTnode
         {
             this.statements = statements;
         }
-    }
 
-    public static class Parameter implements AST
-    {
-        AST variable;
-
-        Parameter(AST variable)
-        {
-            this.variable = variable;
+        public ArrayList<AST> getStatements() {
+            return statements;
         }
     }
 
@@ -71,6 +80,11 @@ public class ASTnode
         {
             this.name = name;
         }
+
+        public Token getName() {
+            return name;
+        }
+
     }
 
     public static class FunctionCall implements AST
@@ -82,6 +96,14 @@ public class ASTnode
         {
             this.name = name;
             this.arguments = arguments;
+        }
+
+        public Token getName() {
+            return name;
+        }
+
+        public ArrayList<AST> getArguments() {
+            return arguments;
         }
     }
 
@@ -95,6 +117,14 @@ public class ASTnode
             this.variable = var;
             this.assignmentValue = addExp;
         }
+
+        public AST getVariable() {
+            return variable;
+        }
+
+        public AST getAssignmentValue() {
+            return assignmentValue;
+        }
     }
 
     public static class VarDeclaration implements AST
@@ -106,6 +136,14 @@ public class ASTnode
         {
             this.name = name;
             this.assignmentValue = addExp;
+        }
+
+        public Token getName() {
+            return name;
+        }
+
+        public AST getAssignmentValue() {
+            return assignmentValue;
         }
     }
 
@@ -119,6 +157,18 @@ public class ASTnode
             this.ifBody = ifBody;
             this.elseBody = elseBody;
         }
+
+        public AST getCondition() {
+            return condition;
+        }
+
+        public AST getIfBody() {
+            return ifBody;
+        }
+
+        public AST getElseBody() {
+            return elseBody;
+        }
     }
 
     public static class WhileStatement implements AST
@@ -130,6 +180,14 @@ public class ASTnode
             this.condition = condition;
             this.whileBody = whileBody;
         }
+
+        public AST getCondition() {
+            return condition;
+        }
+
+        public AST getWhileBody() {
+            return whileBody;
+        }
     }
 
     public static class ReturnStatement implements AST
@@ -140,6 +198,10 @@ public class ASTnode
         {
             this.retValue = retValue;
         }
+
+        public AST getRetValue() {
+            return retValue;
+        }
     }
 
     public static class PrintCall implements AST
@@ -149,6 +211,10 @@ public class ASTnode
         PrintCall(AST printCall)
         {
             this.printCall = printCall;
+        }
+
+        public AST getPrintCall() {
+            return printCall;
         }
     }
 
@@ -162,6 +228,18 @@ public class ASTnode
             this.left = left;
             this.operation = operation;
         }
+
+        public AST getRight() {
+            return right;
+        }
+
+        public AST getLeft() {
+            return left;
+        }
+
+        public Token getOperation() {
+            return operation;
+        }
     }
 
     public static class BinLogicOperator implements AST
@@ -174,6 +252,18 @@ public class ASTnode
             this.left = left;
             this.operation = operation;
         }
+
+        public AST getRight() {
+            return right;
+        }
+
+        public AST getLeft() {
+            return left;
+        }
+
+        public Token getOperation() {
+            return operation;
+        }
     }
 
     public static class NumberTest implements AST
@@ -184,6 +274,10 @@ public class ASTnode
         {
             this.expression = expression;
         }
+
+        public Token getExpression() {
+            return expression;
+        }
     }
 
     public static class IntNum implements AST
@@ -192,6 +286,10 @@ public class ASTnode
         IntNum(Token token)
         {
             this.value = token.getIntValue();
+        }
+
+        public Integer getValue() {
+            return value;
         }
     }
 
@@ -202,6 +300,10 @@ public class ASTnode
         {
             this.value = token.getDoubleValue();
         }
+
+        public Double getValue() {
+            return value;
+        }
     }
 
     public static class StringVar implements AST
@@ -210,6 +312,10 @@ public class ASTnode
         StringVar(Token token)
         {
             this.value = token.getValue();
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 
@@ -226,10 +332,22 @@ public class ASTnode
             this.parentName = parent;
         }
 
-        Unit(Token name, Token number)
+        Unit(Token number, Token name)
         {
             this.name = name;
             this.number = number;
+        }
+
+        public Token getName() {
+            return name;
+        }
+
+        public Token getNumber() {
+            return number;
+        }
+
+        public Token getParentName() {
+            return parentName;
         }
     }
 
@@ -243,7 +361,14 @@ public class ASTnode
             this.name = name;
             this.unitField = unitField;
         }
-    }
 
+        public Token getName() {
+            return name;
+        }
+
+        public Token getUnitField() {
+            return unitField;
+        }
+    }
 }
 
