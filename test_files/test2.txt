@@ -1,0 +1,6 @@
+function main () 
+{
+var xd=1.5; // test
+var str="message";
+x = 2 + 2 * 2  (7 + 1);
+};

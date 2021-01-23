@@ -3,12 +3,20 @@ function fun (abc, efg)
     var x = [2 kg];
     def m: [LENGTH];
     def kg: 1000 g;
-    xd();
+    abc();
     x = -7.0;
     y = "string";
-    x = 2 + 2 * 2 + (7 + 1);
-    if ( (x < 10 & x) | xd == 5)
+    if ((2 < x) == true)
     {
+        x = 9;
+    };
+    x = 2 + 2 * 2 + (7 + 1);
+    if  ((x < 10 & x) | abc == 5)
+    {
+        // var x  odpowiedni zakres widocznosci - ten x przykrywa iksa z klamry, za klamrą jest ten z 2 linii
+        // nie mozna deklarowac 2 razy tego samego na jednej wysokosci
+        // obsłużyć dzielenie przez 0 - zwrocic przy czyms takim sensowny komunikat (w tym 2 zmienne - jedna 0)
+        // niezgodnosc typow trzeba obsluzyc błędem
         x = 10;
     }
     else

@@ -7,6 +7,8 @@ import parser.Parser;
 import parser.ParserException;
 import standard.TokenType;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +31,7 @@ class ParserTest
 
     AST program = parser.program();
 
-    ParserTest() throws ParserException {
+    ParserTest() throws ParserException, FileNotFoundException {
     }
 
     ArrayList<AST> statements = ((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getFunctionBody()).getStatements();
@@ -212,6 +214,7 @@ class ParserTest
         assertEquals(ASTnode.FunctionBody.class, ((ASTnode.IfStatement) statementBis).getIfBody().getClass());
     }
 
+
     @Test
     void elseBlockTest() throws ParserException
     {
@@ -308,5 +311,73 @@ class ParserTest
     void binLogicOperatorTestQuater() throws ParserException
     {
         assertEquals("<=", ((ASTnode.BinLogicOperator)(((ASTnode.BinLogicOperator)((ASTnode.WhileStatement) statementQuater).getCondition()).getLeft())).getOperation().getValue());
+    }
+
+    @Test
+    void negativeTestBis() throws ParserException, FileNotFoundException {
+        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\exampleBis.txt");
+        Parser parser5 = new Parser(file);
+
+        String message = " ";
+        try
+        {
+            parser5.program();
+        }
+        catch (ParserException e)
+        {
+            message = e.toString();
+        }
+        assertEquals("Expected SEMICOLON at line: 4.0, position: 1", message);
+    }
+
+    @Test
+    void negativeTest() throws ParserException, FileNotFoundException {
+        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test.txt");
+        Parser parser = new Parser(file);
+
+        String message = " ";
+        try
+        {
+            parser.program();
+        }
+        catch (ParserException e)
+        {
+            message = e.toString();
+        }
+        assertEquals("Unknown Token Type at line: 2.0, position: 10", message);
+    }
+
+    @Test
+    void negativeTest1() throws ParserException, FileNotFoundException {
+        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test1.txt");
+        Parser parser = new Parser(file);
+
+        String message = " ";
+        try
+        {
+            parser.program();
+        }
+        catch (ParserException e)
+        {
+            message = e.toString();
+        }
+        assertEquals("Unknown Token Type at line: 3.0, position: 17", message);
+    }
+
+    @Test
+    void negativeTest2() throws ParserException, FileNotFoundException {
+        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test2.txt");
+        Parser parser = new Parser(file);
+
+        String message = " ";
+        try
+        {
+            parser.program();
+        }
+        catch (ParserException e)
+        {
+            message = e.toString();
+        }
+        assertEquals("Expected SEMICOLON at line: 4.0, position: 16", message);
     }
 }

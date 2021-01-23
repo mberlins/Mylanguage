@@ -10,11 +10,14 @@ import java.util.ArrayList;
 public class Parser
 {
     Lexer lexer;
+    ArrayList<Token> currentTokens =  new ArrayList<>();;
     Token currentToken;
 
     public Parser(File file) throws FileNotFoundException {
         lexer = new Lexer(file);
+
         currentToken = lexer.nextToken();
+
     }
 
     public Parser(String code) {
@@ -24,6 +27,7 @@ public class Parser
 
     public AST program() throws ParserException
     {
+        //int x = 2 2;          // java chce srednika po dwojce
         AST program = new Program();
         while (currentToken.getType() != TokenType.EOF)
         {
@@ -34,16 +38,24 @@ public class Parser
 
     private void proceed(TokenType type) throws ParserException
     {
-
         if (currentToken.getType() == type)
         {
-            currentToken = lexer.nextToken();
+            if (currentTokens.size() > 0)
+            {
+                currentToken = currentTokens.get(0);
+                currentTokens.remove(0);
+            }
+            else
+                currentToken = lexer.nextToken();
             return;
         }
         else if (currentToken.getType() == TokenType.UNKNOWN)
             throw new ParserException("Unsupported type", currentToken.getX_coor(), currentToken.getY_coor());
         else
-            throw new ParserException("Expected other Token type", currentToken.getX_coor(), currentToken.getY_coor());
+        {
+            String message = "Expected " + type.name();
+            throw new ParserException(message , currentToken.getX_coor(), currentToken.getY_coor());
+        }
     }
 
     private AST function() throws ParserException
@@ -137,8 +149,9 @@ public class Parser
 
     private AST functionCallStatement() throws ParserException
     {
-        ArrayList<Character> waitingList = (ArrayList<Character>) lexer.peekCharacters();
-        if (currentToken.getType() != TokenType.NAME || waitingList.get(0) != '(')
+        //ArrayList<Character> waitingList = (ArrayList<Character>) lexer.peekCharacters();
+        currentTokens.add(lexer.nextToken());
+        if (currentToken.getType() != TokenType.NAME || currentTokens.get(0).getType() != TokenType.LEFT_PARENTHESIS)
             return null;
 
         Token functionName = currentToken;
@@ -278,7 +291,7 @@ public class Parser
 
         proceed(TokenType.PRINT);
         AST printArgument = additiveExpression();
-        proceed(TokenType.SEMICOLON);
+        //proceed(TokenType.SEMICOLON);
 
         return new PrintCall(printArgument);
     }
@@ -413,8 +426,11 @@ public class Parser
         }
         else if ((leaf = functionCallStatement()) != null)
             return leaf;
+        else if ((leaf = variable()) != null)
+            return leaf;
 
-        return variable();
+        throw new ParserException("Unknown Token Type" , currentToken.getX_coor(), currentToken.getY_coor());
+        //return variable();
     }
 
     private AST intOrDouble(Token token) throws ParserException
@@ -446,6 +462,9 @@ public class Parser
 
     private AST variable() throws ParserException
     {
+        if( currentToken.getType() != TokenType.NAME)
+            return null;
+
         AST var = new Variable(currentToken);
         proceed(TokenType.NAME);
         return var;

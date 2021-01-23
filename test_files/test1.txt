@@ -1,0 +1,5 @@
+function main () 
+{
+var xd=1.5; // test
+var str="message;
+};
