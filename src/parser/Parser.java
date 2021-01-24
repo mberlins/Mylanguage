@@ -31,7 +31,8 @@ public class Parser
         AST program = new Program();
         while (currentToken.getType() != TokenType.EOF)
         {
-            ((Program) program).addFunction(function());
+            AST f = function();
+            ((Program) program).addFunction( ((ASTnode.FunctionDef) f).getName().getValue() , f);
         }
         return program;
     }
@@ -205,7 +206,6 @@ public class Parser
             proceed(TokenType.ASSIGNMENT_OP);
             additiveExp = additiveExpression();
         }
-
 
         return new VarDeclaration(name, additiveExp);
     }

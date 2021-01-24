@@ -34,22 +34,22 @@ class ParserTest
     ParserTest() throws ParserException, FileNotFoundException {
     }
 
-    ArrayList<AST> statements = ((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getFunctionBody()).getStatements();
+    ArrayList<AST> statements = ((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get("fun"))).getFunctionBody()).getStatements();
 
     @Test
     void functionParamList() throws ParserException
     {
-        assertEquals("abc", ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getParamList()).getNames().get(0)).getName().getValue());
-        assertEquals(TokenType.NAME, ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getParamList()).getNames().get(0)).getName().getType());
-        assertEquals("efg", ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getParamList()).getNames().get(1)).getName().getValue());
-        assertEquals(TokenType.NAME, ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getParamList()).getNames().get(1)).getName().getType());
+        assertEquals("abc", ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get("fun"))).getParamList()).getNames().get(0)).getName().getValue());
+        assertEquals(TokenType.NAME, ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get("fun"))).getParamList()).getNames().get(0)).getName().getType());
+        assertEquals("efg", ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get("fun"))).getParamList()).getNames().get(1)).getName().getValue());
+        assertEquals(TokenType.NAME, ((ASTnode.Variable)((ASTnode.ParamList)((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get("fun"))).getParamList()).getNames().get(1)).getName().getType());
     }
 
     @Test
     void functionHeader() throws ParserException
     {
-        assertEquals("fun", (((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getName().getValue()));
-        assertEquals(TokenType.NAME, (((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get(0))).getName().getType()));
+        assertEquals("fun", (((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get("fun"))).getName().getValue()));
+        assertEquals(TokenType.NAME, (((ASTnode.FunctionDef)(((ASTnode.Program) program).getFunctions().get("fun"))).getName().getType()));
     }
 
     @Test
@@ -109,8 +109,8 @@ class ParserTest
     @Test
     void varDeclarationTest() throws ParserException
     {
-        assertEquals(TokenType.NAME, ((ASTnode.VarDeclaration)statements.get(0)).getName().getType());
-        assertEquals("x", ((ASTnode.VarDeclaration)statements.get(0)).getName().getValue());
+        //assertEquals(TokenType.NAME, ((ASTnode.VarDeclaration)statements.get(0)).getName().getType());
+        assertEquals("x", ((ASTnode.VarDeclaration)statements.get(0)).getName());
         assertEquals("kg", ((ASTnode.Unit)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getName().getValue());
         assertEquals(2, ((ASTnode.Unit)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getNumber().getIntValue());
     }
@@ -182,7 +182,7 @@ class ParserTest
             "    };\n" +
             "}\n");
     AST programBis = parserBis.program();
-    AST statementBis = (((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) programBis).getFunctions().get(0))).getFunctionBody()).getStatements()).get(0);
+    AST statementBis = (((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) programBis).getFunctions().get("foo"))).getFunctionBody()).getStatements()).get(0);
 
     @Test
     void ifConditionTest() throws ParserException
@@ -229,7 +229,7 @@ class ParserTest
             "    };\n" +
             "}\n");
     AST programTer = parserTer.program();
-    AST statementTer = (((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) programTer).getFunctions().get(0))).getFunctionBody()).getStatements()).get(0);
+    AST statementTer = (((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) programTer).getFunctions().get("foo"))).getFunctionBody()).getStatements()).get(0);
 
     @Test
     void whileConditionTest() throws ParserException
@@ -269,7 +269,7 @@ class ParserTest
             "    };\n" +
             "}\n");
     AST programQuater = parserQuater.program();
-    AST statementQuater = (((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) programQuater).getFunctions().get(0))).getFunctionBody()).getStatements()).get(0);
+    AST statementQuater = (((ASTnode.FunctionBody)((ASTnode.FunctionDef)(((ASTnode.Program) programQuater).getFunctions().get("foo"))).getFunctionBody()).getStatements()).get(0);
 
     @Test
     void binLogicOperatorTest() throws ParserException

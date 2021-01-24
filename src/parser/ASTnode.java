@@ -1,20 +1,28 @@
 package parser;
 
+import Interpreter.Interpreter;
+import Interpreter.InterpreterException;
 import standard.Token;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ASTnode
 {
     public static class Program implements AST
     {
-        private ArrayList<AST> functions = new ArrayList<AST>();
+        private HashMap<String, AST> functions = new HashMap<>();
 
-        public ArrayList<AST> getFunctions() {
+        public HashMap<String, AST> getFunctions() {
             return functions;
         }
-        public void addFunction(AST function) {
-            functions.add(function);
+        public void addFunction(String name, AST function) {
+            functions.put(name, function);
+        }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
         }
     }
 
@@ -42,6 +50,10 @@ public class ASTnode
         public AST getFunctionBody() {
             return functionBody;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class ParamList implements AST
@@ -55,6 +67,11 @@ public class ASTnode
 
         public ArrayList<AST> getNames() {
             return names;
+        }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
         }
     }
 
@@ -70,11 +87,16 @@ public class ASTnode
         public ArrayList<AST> getStatements() {
             return statements;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class Variable implements AST
     {
         Token name;
+        AST value; //todo był token
 
         Variable(Token name)
         {
@@ -85,6 +107,14 @@ public class ASTnode
             return name;
         }
 
+        public void setValue(AST value) {
+            this.value = value;
+        }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
+        }
     }
 
     public static class FunctionCall implements AST
@@ -104,6 +134,10 @@ public class ASTnode
 
         public ArrayList<AST> getArguments() {
             return arguments;
+        }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
         }
     }
 
@@ -125,25 +159,33 @@ public class ASTnode
         public AST getAssignmentValue() {
             return assignmentValue;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class VarDeclaration implements AST
     {
-        Token name;
+        AST name;   //todo byl token
         AST assignmentValue;
 
-        VarDeclaration(Token name, AST addExp)
+        VarDeclaration(AST name, AST addExp)
         {
             this.name = name;
             this.assignmentValue = addExp;
         }
 
-        public Token getName() {
+        public AST getName() {
             return name;
         }
 
         public AST getAssignmentValue() {
             return assignmentValue;
+        }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
         }
     }
 
@@ -169,6 +211,10 @@ public class ASTnode
         public AST getElseBody() {
             return elseBody;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class WhileStatement implements AST
@@ -188,6 +234,10 @@ public class ASTnode
         public AST getWhileBody() {
             return whileBody;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class ReturnStatement implements AST
@@ -202,6 +252,10 @@ public class ASTnode
         public AST getRetValue() {
             return retValue;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class PrintCall implements AST
@@ -215,6 +269,10 @@ public class ASTnode
 
         public AST getPrintCall() {
             return printCall;
+        }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
         }
     }
 
@@ -239,6 +297,10 @@ public class ASTnode
 
         public Token getOperation() {
             return operation;
+        }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
         }
     }
 
@@ -265,6 +327,10 @@ public class ASTnode
         public Token getOperation() {
             return operation;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class UnOperator implements AST
@@ -283,6 +349,11 @@ public class ASTnode
         public AST getExpression(){
             return expression;
         }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
+        }
     }
 
     public static class IntNum implements AST
@@ -296,18 +367,28 @@ public class ASTnode
         public Integer getValue() {
             return value;
         }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
+        }
     }
 
     public static class DoubleNum implements AST
     {
         Double value;
-        DoubleNum(Token token)
+        public DoubleNum(Token token)
         {
             this.value = token.getDoubleValue();
         }
 
         public Double getValue() {
             return value;
+        }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
         }
     }
 
@@ -321,6 +402,11 @@ public class ASTnode
 
         public String getValue() {
             return value;
+        }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
         }
     }
 
@@ -354,6 +440,10 @@ public class ASTnode
         public Token getParentName() {
             return parentName;
         }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
     }
 
     public static class BaseUnit implements AST
@@ -373,6 +463,10 @@ public class ASTnode
 
         public Token getUnitField() {
             return unitField;
+        }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
         }
     }
 }
