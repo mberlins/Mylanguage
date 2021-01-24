@@ -11,11 +11,11 @@ import java.util.HashMap;
 
 public class CallContext {
 
-    ArrayList<HashMap<String, ASTnode.Variable>> localVariablesStack = new ArrayList<>();
+    ArrayList<HashMap<String, AST>> localVariablesStack = new ArrayList<>();
 
     public void addVarContext()
     {
-        HashMap<String, ASTnode.Variable> newVarContext = new HashMap<String, ASTnode.Variable>();
+        HashMap<String, AST> newVarContext = new HashMap<String, AST>();
         localVariablesStack.add(newVarContext);
     }
 
@@ -24,26 +24,34 @@ public class CallContext {
         localVariablesStack.remove(localVariablesStack.size() - 1);
     }
 
-    public void addVariable(AST var)
+    public void updateVarInBlockContext(AST name, AST value) throws InterpreterException
     {
-        ASTnode.Variable x = (ASTnode.Variable)var;
-        localVariablesStack.get(localVariablesStack.size() - 1).put(x.getName().getValue(), (ASTnode.Variable)var);
-    }
-
-    public void updateVarInBlockContext(AST name, AST value) throws InterpreterException {
-        ASTnode.Variable tmp = null; // wskazanie na variable
+        AST tmp = null; // wskazanie na variable
         for(int i = 1; i <= localVariablesStack.size(); i++) {
-            if ((tmp = localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue())) != null) {
+            if ((tmp = localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue())) != null)
+            {
+                localVariablesStack.get(localVariablesStack.size() - i).replace(((ASTnode.Variable) (name)).getName().getValue(), value);
                 break;
             }
         }
         if(tmp == null) throw new InterpreterException("Variable is not declared in this scope");
-
-        tmp.setValue(value);
     }
 
-    public void declareVarInCurrentScope(AST name, AST value) throws InterpreterException {
-        localVariablesStack.get(localVariablesStack.size() - 1).put(((ASTnode.Variable)name).getName().getValue(), (ASTnode.Variable)value);
+    public void declareVarInCurrentScope(AST name, AST value) throws InterpreterException
+    {
+        localVariablesStack.get(localVariablesStack.size() - 1).put(((ASTnode.Variable)name).getName().getValue(), value);
     }
 
+    public AST getVarValue(AST name) throws InterpreterException
+    {
+        AST tmp = null; // wskazanie na variable
+        for (int i = 1; i <= localVariablesStack.size(); i++)
+        {
+            if ((tmp = localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue())) != null)
+            {
+                return tmp;
+            }
+        }
+        throw new InterpreterException("Variable is not declared in this scope");
+    }
 }

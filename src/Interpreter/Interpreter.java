@@ -5,54 +5,93 @@ import parser.ASTnode;
 import standard.Token;
 import standard.TokenType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Interpreter
 {
-    /*Environment environment;
+    Environment environment;
+    AST program;
 
-    public AST getFunc(String name) throws InterpreterException {
-        AST temporaryFunctionDef = new ASTnode().Variable(Token );
-        //todo implement searching
-        if(not found) throw new InterpreterException("Function not declared!");
-        //return temporaryFunctionDef; //todo TUTAJ
-    }
-
-    public void visit(AST ast)
+    public Interpreter(AST program)
     {
-
+        this.program = program;
     }
 
-    public void visit(ASTnode.Program program)
+    public Object run() throws InterpreterException {
+        program.accept(this);
+        return environment.getLastResult();
+    }
+
+    public AST getFunc(String name) throws InterpreterException
+    {
+        if(environment.getFuncDefs().get(name) == null)
+            throw new InterpreterException("Function not declared!");
+        else
+            return environment.getFuncDefs().get(name);
+    }
+
+    public void visit(ASTnode.Program program) throws InterpreterException
     {
         environment = new Environment(program.getFunctions());
+        AST main = getFunc("main");         // todo blad no main
+        main.accept(this);
     }
 
-    public void visit(ASTnode.FunctionDef functionDef) throws InterpreterException {
-        functionDef.getFunctionBody().accept(this);
-    }
-
-    public void visit(ASTnode.FunctionCall functionCall) throws InterpreterException {
+    public void visit(ASTnode.FunctionDef functionDef) throws InterpreterException
+    {
         environment.addBlockContext();
-        environment.addVarContext(); // to nie moze byc tu
-        for(AST i : ((ASTnode.ParamList)((ASTnode.FunctionDef)(getFunc(functionCall.getName().getValue()))).getParamList()).getNames()){
-            // mapa argumentów z parametrami
-        }
 
-        getFunc(functionCall.getName().getValue()).accept(this);
+        if(((ASTnode.FunctionDef)(getFunc(functionDef.getName().getValue()))).getParamList() != null) {
+            environment.setParameters(((ASTnode.ParamList) ((ASTnode.FunctionDef) (getFunc(functionDef.getName().getValue()))).getParamList()).getNames());
+
+            if (environment.getParameters().size() != environment.getParametersValues().size())
+                throw new InterpreterException("Expected: " + environment.getParameters().size() + "arguments but got: " + environment.getParametersValues().size());
+            int counter = 0;
+            for (AST i : environment.getParameters()) {
+                ((ASTnode.Variable) i).setValue((environment.getParametersValues().get(counter))); //todo to jedyne dozwolone użycie value w Variable
+                counter++;
+            }
+        }
+        functionDef.getFunctionBody().accept(this);
         environment.deleteBlockContext();
     }
 
-    public void visit(ASTnode.FunctionBody functionBody) throws InterpreterException {
+    public void visit(ASTnode.FunctionCall functionCall) throws InterpreterException
+    {
+        //tutaj zapisanie wartości tych parametrów po kolei do Array parameters
+        ArrayList<AST> tmp = new ArrayList<>();
+        for(AST i : functionCall.getArguments())
+        {
+            if(i instanceof ASTnode.Variable || i instanceof ASTnode.FunctionCall)
+            {
+                i.accept(this); // po wyjściu stąd w lastResult będzie wartość vara albo functioncalla
+                tmp.add((AST) environment.getLastResult());
+            }
+            else // będzie num, unit, albo string bez ifa
+                tmp.add(i);
+        }
+        environment.setParametersValues(tmp);
+        getFunc(functionCall.getName().getValue()).accept(this); // wyszukuje funkcję w arrayu funkcji
+    }
+
+    public void visit(ASTnode.FunctionBody functionBody) throws InterpreterException
+    {
         environment.addVarContext();
+        if(environment.getParameters() != null)
+            for(AST i : environment.getParameters())
+            {
+                environment.declareVarInCurrentScope(i, ((ASTnode.Variable) i).getValue()); //todo DOZWOLONE TYLKO W TYM PRZYPADKU, W INNYCH GETVALUE NIE REPREZENTUJE WARTOŚCI ZMIENNEJ
+            }
 
         for(AST i : functionBody.getStatements()){
             if(i instanceof ASTnode.ReturnStatement)
             {
-                //cos tu jeszcze
                 i.accept(this);
+                return;
             }
             i.accept(this);
         }
-
         environment.deleteVarContext();
     }
 
@@ -80,7 +119,6 @@ public class Interpreter
         while((Boolean) (environment.getLastResult()))
         {
             whileStatement.getWhileBody().accept(this);
-
             whileStatement.getCondition().accept(this);
             if(!(environment.getLastResult() instanceof Boolean)) throw new InterpreterException("błąd"); //todo zmien
         }
@@ -88,28 +126,23 @@ public class Interpreter
 
     public void visit(ASTnode.Assignment assignment) throws InterpreterException
     {
-        assignment.getVariable().accept(this);
-        if (!(environment.getLastResult() instanceof ASTnode.Variable)) throw new InterpreterException("Not a variable");
-
-        ASTnode.Variable var = (ASTnode.Variable) environment.getLastResult();
+        AST var = assignment.getVariable();
         assignment.getAssignmentValue().accept(this);
-        if(!((environment.getLastResult() instanceof ASTnode.IntNum) && (environment.getLastResult() instanceof ASTnode.DoubleNum)
-                && (environment.getLastResult() instanceof ASTnode.Unit) && (environment.getLastResult() instanceof ASTnode.BaseUnit)
-                && (environment.getLastResult() instanceof ASTnode.StringVar))) throw new InterpreterException("Error");
+
+        if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
+                || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
+                || (environment.getLastResult() instanceof ASTnode.StringVar))) throw new InterpreterException("Error");
 
         environment.updateVarInCurrentBlockContext(var, (AST) environment.getLastResult());
     }
 
     public void visit(ASTnode.VarDeclaration varDeclaration) throws InterpreterException
     {
-        varDeclaration.getName().accept(this);
-        if (!(environment.getLastResult() instanceof ASTnode.Variable)) throw new InterpreterException("Not a variable");
-        ASTnode.Variable var = (ASTnode.Variable) environment.getLastResult();
-
+        AST var = varDeclaration.getName();
         varDeclaration.getAssignmentValue().accept(this);
-        if(!((environment.getLastResult() instanceof ASTnode.IntNum) && (environment.getLastResult() instanceof ASTnode.DoubleNum)
-                && (environment.getLastResult() instanceof ASTnode.Unit) && (environment.getLastResult() instanceof ASTnode.BaseUnit)
-                && (environment.getLastResult() instanceof ASTnode.StringVar) && (environment.getLastResult() == null))) throw new InterpreterException("Error");
+        if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
+                || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
+                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() == null))) throw new InterpreterException("Error");
 
         environment.declareVarInCurrentScope(var, (AST) environment.getLastResult());
     }
@@ -133,28 +166,85 @@ public class Interpreter
     public void visit(ASTnode.BinOperator binOperator) throws InterpreterException
     {
         binOperator.getLeft().accept(this);
-        AST tmpLeft = (AST)environment.getLastResult();
+        AST tmpLeft = (AST) environment.getLastResult();
+        //todo spradzić czy tmpLeft jest Num coś tam String -- tu można sprawdzić mnożenie i dodawanie unitów
         binOperator.getRight().accept(this);
         AST tmpRight = (AST)environment.getLastResult();
         //todo też sprawdzić
         Token operator = binOperator.getOperation();
 
-        if(tmpLeft instanceof ASTnode.DoubleNum && tmpRight instanceof ASTnode.DoubleNum)
+        if((tmpLeft instanceof ASTnode.DoubleNum) && (tmpRight instanceof ASTnode.DoubleNum))
         {
             if(operator.getType() == TokenType.MULTIPLICATIVE_OP)
             {
                 double result = ((ASTnode.DoubleNum)tmpLeft).getValue() * ((ASTnode.DoubleNum)tmpRight).getValue();
                 environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
             }
+            else  if(operator.getType() == TokenType.DIVIDE_OP)
+            {
+                double result = ((ASTnode.DoubleNum)tmpLeft).getValue() / ((ASTnode.DoubleNum)tmpRight).getValue();
+                environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
+            }
+            else  if(operator.getType() == TokenType.ADDITIVE_OP)
+            {
+                double result = ((ASTnode.DoubleNum)tmpLeft).getValue() + ((ASTnode.DoubleNum)tmpRight).getValue();
+                environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
+            }
+            else  if(operator.getType() == TokenType.MINUS_OP)
+            {
+                double result = ((ASTnode.DoubleNum)tmpLeft).getValue() - ((ASTnode.DoubleNum)tmpRight).getValue();
+                environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
+            }
         }
+        else if(tmpLeft instanceof ASTnode.StringVar && tmpRight instanceof ASTnode.StringVar)
+        {
+            if(operator.getType() == TokenType.MINUS_OP)
+            {
+                String result = ((ASTnode.StringVar)tmpLeft).getValue() + ((ASTnode.StringVar)tmpRight).getValue();
+                environment.setLastResult(new ASTnode.StringVar(new Token(0, 0, result, TokenType.STRING)));
+            }
+        }
+        else throw new InterpreterException("Forbidden operation!");
     }
 
-    public void visit(ASTnode.BinLogicOperator binLogicOperator) throws  InterpreterException {
+    public void visit(ASTnode.BinLogicOperator binLogicOperator) throws  InterpreterException
+    {
         binLogicOperator.getLeft().accept(this);
-        if(!((environment.getLastResult() instanceof ASTnode.IntNum) && (environment.getLastResult() instanceof ASTnode.DoubleNum)
-                && (environment.getLastResult() instanceof ASTnode.Unit) && (environment.getLastResult() instanceof ASTnode.BaseUnit)
-                && (environment.getLastResult() instanceof ASTnode.StringVar) && (environment.getLastResult() == null))) throw new InterpreterException("Error");
+        if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
+                || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
+                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() == null))) throw new InterpreterException("Error");
 
     }
-*/
+
+    //odwiedzona variable będzie ustawiała dwa pola env
+    public void visit(ASTnode.Variable v) throws  InterpreterException
+    {
+        environment.setLastResultVar(v);
+        environment.setLastResult(environment.getVarValue(v));
+    }
+
+    public void visit(ASTnode.IntNum num)
+    {
+        environment.setLastResult(num);
+    }
+
+    public void visit(ASTnode.DoubleNum num)
+    {
+        environment.setLastResult(num);
+    }
+
+    public void visit(ASTnode.ParamList paramList)
+    {
+        //niepotrzebne chyba, rzutuję już wcześniej
+    }
+
+    public void visit(ASTnode.StringVar stringVar)
+    {
+        environment.setLastResult(stringVar);
+    }
+
+    public void visit(ASTnode.UnOperator unOperator)
+    {
+
+    }
 }

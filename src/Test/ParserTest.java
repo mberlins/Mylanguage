@@ -380,4 +380,21 @@ class ParserTest
         }
         assertEquals("Expected SEMICOLON at line: 4.0, position: 16", message);
     }
+
+    @Test
+    void negativeTest3() throws ParserException, FileNotFoundException {
+        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test3.txt");
+        Parser parser = new Parser(file);
+
+        String message = " ";
+        try
+        {
+            parser.program();
+        }
+        catch (ParserException e)
+        {
+            message = e.toString();
+        }
+        assertEquals("Expected COLON at line: 4.0, position: 15", message);
+    }
 }

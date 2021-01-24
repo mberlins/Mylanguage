@@ -1,5 +1,6 @@
 function main () 
 {
-var xd=1.5; // test
-var str="message"
+    var d=1.5; // test
+    var str="message";
+    def kg 1000 g;
 };
