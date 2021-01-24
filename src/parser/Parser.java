@@ -196,10 +196,10 @@ public class Parser
             return null;
 
         proceed(TokenType.VAR);
-        Token name = currentToken;
+        AST name = variable();
         AST additiveExp = null;
 
-        proceed(TokenType.NAME);
+        //proceed(TokenType.NAME);
 
         if (currentToken.getType() == TokenType.ASSIGNMENT_OP)
         {

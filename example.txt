@@ -1,6 +1,7 @@
 function fun (abc, efg)
 {
     var x = [2 kg];
+    var y = 7;
     def m: [LENGTH];
     def kg: 1000 g;
     abc();

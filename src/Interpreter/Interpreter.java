@@ -7,7 +7,7 @@ import standard.TokenType;
 
 public class Interpreter
 {
-    Environment environment;
+    /*Environment environment;
 
     public AST getFunc(String name) throws InterpreterException {
         AST temporaryFunctionDef = new ASTnode().Variable(Token );
@@ -156,5 +156,5 @@ public class Interpreter
                 && (environment.getLastResult() instanceof ASTnode.StringVar) && (environment.getLastResult() == null))) throw new InterpreterException("Error");
 
     }
-
+*/
 }

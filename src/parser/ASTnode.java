@@ -20,10 +20,10 @@ public class ASTnode
             functions.put(name, function);
         }
 
-        public void accept(Interpreter visitor)
-        {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor)
+//        {
+//            visitor.visit(this);
+//        }
     }
 
     public static class FunctionDef implements AST
@@ -51,9 +51,9 @@ public class ASTnode
             return functionBody;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class ParamList implements AST
@@ -69,10 +69,10 @@ public class ASTnode
             return names;
         }
 
-        public void accept(Interpreter visitor)
-        {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor)
+//        {
+//            visitor.visit(this);
+//        }
     }
 
     public static class FunctionBody implements AST
@@ -88,9 +88,9 @@ public class ASTnode
             return statements;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class Variable implements AST
@@ -111,10 +111,10 @@ public class ASTnode
             this.value = value;
         }
 
-        public void accept(Interpreter visitor)
-        {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor)
+//        {
+//            visitor.visit(this);
+//        }
     }
 
     public static class FunctionCall implements AST
@@ -136,9 +136,9 @@ public class ASTnode
             return arguments;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class Assignment implements AST
@@ -160,9 +160,9 @@ public class ASTnode
             return assignmentValue;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class VarDeclaration implements AST
@@ -184,9 +184,9 @@ public class ASTnode
             return assignmentValue;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class IfStatement implements AST
@@ -212,9 +212,9 @@ public class ASTnode
             return elseBody;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class WhileStatement implements AST
@@ -235,9 +235,9 @@ public class ASTnode
             return whileBody;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class ReturnStatement implements AST
@@ -253,9 +253,9 @@ public class ASTnode
             return retValue;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class PrintCall implements AST
@@ -271,9 +271,9 @@ public class ASTnode
             return printCall;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class BinOperator implements AST{
@@ -299,9 +299,9 @@ public class ASTnode
             return operation;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class BinLogicOperator implements AST
@@ -328,9 +328,9 @@ public class ASTnode
             return operation;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class UnOperator implements AST
@@ -350,10 +350,10 @@ public class ASTnode
             return expression;
         }
 
-        public void accept(Interpreter visitor)
-        {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor)
+//        {
+//            visitor.visit(this);
+//        }
     }
 
     public static class IntNum implements AST
@@ -368,10 +368,10 @@ public class ASTnode
             return value;
         }
 
-        public void accept(Interpreter visitor)
-        {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor)
+//        {
+//            visitor.visit(this);
+//        }
     }
 
     public static class DoubleNum implements AST
@@ -386,10 +386,10 @@ public class ASTnode
             return value;
         }
 
-        public void accept(Interpreter visitor)
-        {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor)
+//        {
+//            visitor.visit(this);
+//        }
     }
 
     public static class StringVar implements AST
@@ -404,10 +404,10 @@ public class ASTnode
             return value;
         }
 
-        public void accept(Interpreter visitor)
-        {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor)
+//        {
+//            visitor.visit(this);
+//        }
     }
 
     public static class Unit implements AST
@@ -441,9 +441,9 @@ public class ASTnode
             return parentName;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 
     public static class BaseUnit implements AST
@@ -465,9 +465,9 @@ public class ASTnode
             return unitField;
         }
 
-        public void accept(Interpreter visitor) throws InterpreterException {
-            visitor.visit(this);
-        }
+//        public void accept(Interpreter visitor) throws InterpreterException {
+//            visitor.visit(this);
+//        }
     }
 }
 

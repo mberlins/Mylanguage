@@ -109,8 +109,8 @@ class ParserTest
     @Test
     void varDeclarationTest() throws ParserException
     {
-        //assertEquals(TokenType.NAME, ((ASTnode.VarDeclaration)statements.get(0)).getName().getType());
-        assertEquals("x", ((ASTnode.VarDeclaration)statements.get(0)).getName());
+        assertEquals(TokenType.NAME, ((ASTnode.Variable)((ASTnode.VarDeclaration)statements.get(0)).getName()).getName().getType());
+        assertEquals("x", ((ASTnode.Variable)((ASTnode.VarDeclaration)statements.get(0)).getName()).getName().getValue());
         assertEquals("kg", ((ASTnode.Unit)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getName().getValue());
         assertEquals(2, ((ASTnode.Unit)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getNumber().getIntValue());
     }
