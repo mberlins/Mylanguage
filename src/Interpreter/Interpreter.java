@@ -286,39 +286,9 @@ public class Interpreter
         else if (tmpLeft instanceof ASTnode.UnitResult && tmpRight instanceof ASTnode.UnitResult)
         {
             double tmp = 0;
-//            AST left = (environment.getUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue());
-//            AST right = (environment.getUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue());
-//            Token leftParent = null;
-//            Token rightParent = null;
-//            double leftMultiplicity = 1;
-//            double rightMultiplicity = 1;
-//
-//            if (left != null)
-//            {
-//                leftParent = ((ASTnode.Unit)left).getParentName();
-//                leftMultiplicity = Math.max(((ASTnode.Unit)left).getNumber().getDoubleValue(), ((ASTnode.Unit)left).getNumber().getIntValue());
-//            }
-//            if (right != null)
-//            {
-//                rightParent = ((ASTnode.Unit)right).getParentName();
-//                rightMultiplicity = Math.max(((ASTnode.Unit)right).getNumber().getDoubleValue(), ((ASTnode.Unit)right).getNumber().getIntValue()) ;
-//            }
-//            if (left == null)
-//            {
-//                left = (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue());
-//                leftParent = ((ASTnode.BaseUnit)left).getName();
-//            }
-//            if (right == null)
-//            {
-//                right = (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue());
-//                rightParent = ((ASTnode.BaseUnit)right).getName();
-//            }
 
             if (!((ASTnode.UnitResult) tmpLeft).getParentName().getValue().equals(((ASTnode.UnitResult) tmpRight).getParentName().getValue()))
                 throw new InterpreterException("Impossible to add units from different dimensions");
-
-//            ((ASTnode.UnitResult) tmpLeft).setMultiplicity(leftMultiplicity);
-//            ((ASTnode.UnitResult) tmpRight).setMultiplicity(rightMultiplicity);
 
             if(operator.getType() == TokenType.ADDITIVE_OP)
             {
@@ -430,7 +400,18 @@ public class Interpreter
         }
         else if(leftExp instanceof  ASTnode.UnitResult && rightExp instanceof ASTnode.UnitResult)
         {
-
+            if(binLogicOperator.getOperation().getType() == TokenType.EQUAL_OP)
+                environment.setLastResult(((ASTnode.UnitResult) leftExp).equals((ASTnode.UnitResult)rightExp));
+            else if (binLogicOperator.getOperation().getType() == TokenType.UNEQUAL_OP)
+                environment.setLastResult(!(((ASTnode.UnitResult) leftExp).equals((ASTnode.UnitResult)rightExp)));
+            else if (binLogicOperator.getOperation().getType() == TokenType.BIGGER)
+                environment.setLastResult(((ASTnode.UnitResult) leftExp).isBigger((ASTnode.UnitResult)rightExp));
+            else if (binLogicOperator.getOperation().getType() == TokenType.SMALLER)
+                environment.setLastResult(!(((ASTnode.UnitResult) leftExp).isBigger((ASTnode.UnitResult)rightExp)));
+            else if (binLogicOperator.getOperation().getType() == TokenType.BIGGER_EQUAL)
+                environment.setLastResult(((ASTnode.UnitResult) leftExp).isBiggerEqual((ASTnode.UnitResult)rightExp));
+            else if (binLogicOperator.getOperation().getType() == TokenType.SMALLER_EQUAL)
+                environment.setLastResult(((ASTnode.UnitResult) leftExp).isSmallerEqual((ASTnode.UnitResult)rightExp));
         }
         else throw new InterpreterException("Forbidden logical operation!");
     }
