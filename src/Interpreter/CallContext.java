@@ -39,7 +39,10 @@ public class CallContext {
 
     public void declareVarInCurrentScope(AST name, AST value) throws InterpreterException
     {
-        localVariablesStack.get(localVariablesStack.size() - 1).put(((ASTnode.Variable)name).getName().getValue(), value);
+        if (value != null)
+            localVariablesStack.get(localVariablesStack.size() - 1).put(((ASTnode.Variable)name).getName().getValue(), value);
+        else
+            localVariablesStack.get(localVariablesStack.size() - 1).put(((ASTnode.Variable)name).getName().getValue(), new ASTnode.StringVar(null));
     }
 
     public AST getVarValue(AST name) throws InterpreterException
@@ -49,6 +52,10 @@ public class CallContext {
         {
             if ((tmp = localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue())) != null)
             {
+                if (((ASTnode.StringVar)(localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue()))).getValue() == null)
+                {
+                    throw new InterpreterException("Variable not initialized");         // todo dlaczego nigdy tu nie dociera??
+                }
                 return tmp;
             }
         }

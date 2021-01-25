@@ -153,7 +153,7 @@ class ParserTest
     @Test
     void assignmentTestBis() throws ParserException
     {
-        assertEquals("string", ((ASTnode.StringVar)((ASTnode.Assignment)statements.get(5)).getAssignmentValue()).getValue());
+        assertEquals("string", ((ASTnode.StringVar)((ASTnode.Assignment)statements.get(5)).getAssignmentValue()).getValue().getValue());
         assertEquals(TokenType.NAME, ((ASTnode.Variable)((ASTnode.Assignment)statements.get(5)).getVariable()).getName().getType());
         assertEquals("y", ((ASTnode.Variable)((ASTnode.Assignment)statements.get(5)).getVariable()).getName().getValue());
     }

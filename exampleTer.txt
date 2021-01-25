@@ -11,8 +11,10 @@ function foo(a, b)
 
 function main()
 {
-    var x = 5.0;
-    var y = 4.0;
-    x = foo(x, y);
-    return x;
+    var x;
+    var y = 4 + x;
+    x = 8;
+    y = foo(x, y);
+    var z = 5 / 2;
+    return z;
 }

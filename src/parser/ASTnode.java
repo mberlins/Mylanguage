@@ -361,7 +361,7 @@ public class ASTnode
     public static class IntNum implements AST
     {
         Integer value;
-        IntNum(Token token)
+        public IntNum(Token token)
         {
             this.value = token.getIntValue();
         }
@@ -396,13 +396,13 @@ public class ASTnode
 
     public static class StringVar implements AST
     {
-        String value;
+        Token value;
         public StringVar(Token token)
         {
-            this.value = token.getValue();
+            this.value = token;
         }
 
-        public String getValue() {
+        public Token getValue() {
             return value;
         }
 
@@ -453,7 +453,7 @@ public class ASTnode
         Token name;
         Token unitField;
 
-        BaseUnit(Token name, Token unitField)
+        public BaseUnit(Token name, Token unitField)
         {
             this.name = name;
             this.unitField = unitField;
