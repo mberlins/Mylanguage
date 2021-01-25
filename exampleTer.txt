@@ -11,7 +11,7 @@ function foo(a, b)
 
 function main()
 {
-    var x;
+    var x = 5;
     var y = 4 + x;
     x = 8;
     y = foo(x, y);

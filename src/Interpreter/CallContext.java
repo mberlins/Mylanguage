@@ -52,9 +52,12 @@ public class CallContext {
         {
             if ((tmp = localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue())) != null)
             {
-                if (((ASTnode.StringVar)(localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue()))).getValue() == null)
+                if (tmp instanceof ASTnode.StringVar)
                 {
-                    throw new InterpreterException("Variable not initialized");         // todo dlaczego nigdy tu nie dociera??
+                    if (((ASTnode.StringVar)(localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue()))).getValue() == null)
+                    {
+                        throw new InterpreterException("Variable not initialized");
+                    }
                 }
                 return tmp;
             }
