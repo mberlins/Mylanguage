@@ -452,12 +452,6 @@ public class ASTnode
             this.parentName = parent;
         }
 
-        Unit(Token number, Token name)
-        {
-            this.name = name;
-            this.number = number;
-        }
-
         public Token getName() {
             return name;
         }
@@ -468,6 +462,32 @@ public class ASTnode
 
         public Token getParentName() {
             return parentName;
+        }
+
+        public void accept(Interpreter visitor) throws InterpreterException {
+            visitor.visit(this);
+        }
+    }
+
+    public static class UnitResult implements AST
+    {
+        Token name;
+        Double number;
+
+        public UnitResult(Token number, Token name)
+        {
+            this.name = name;
+            if (number.getIntValue() == Integer.MIN_VALUE)
+                this.number = number.getDoubleValue();
+            else
+                this.number = (double)number.getIntValue();
+        }
+        public Token getName() {
+            return name;
+        }
+
+        public Double getNumber() {
+            return number;
         }
 
         public void accept(Interpreter visitor) throws InterpreterException {

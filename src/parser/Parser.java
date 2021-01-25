@@ -457,7 +457,7 @@ public class Parser
         proceed(TokenType.NAME);
         proceed(TokenType.RIGHT_BRACKET);
 
-        return new Unit(number, name);
+        return new UnitResult(number, name);
     }
 
     private AST variable() throws ParserException

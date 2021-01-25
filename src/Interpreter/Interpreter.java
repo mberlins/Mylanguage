@@ -132,7 +132,7 @@ public class Interpreter
 
         if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
                 || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
-                || (environment.getLastResult() instanceof ASTnode.StringVar))) throw new InterpreterException("134");
+                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() instanceof ASTnode.UnitResult))) throw new InterpreterException("134");
 
         environment.updateVarInCurrentBlockContext(var, (AST) environment.getLastResult());
     }
@@ -144,7 +144,8 @@ public class Interpreter
             varDeclaration.getAssignmentValue().accept(this);
         if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
                 || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
-                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() == null))) throw new InterpreterException("146");
+                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() == null
+                || (environment.getLastResult() instanceof ASTnode.UnitResult)))) throw new InterpreterException("146");
 
         if (varDeclaration.getAssignmentValue() != null)
             environment.declareVarInCurrentScope(var, (AST) environment.getLastResult());
@@ -160,22 +161,32 @@ public class Interpreter
 
     public void visit(ASTnode.BaseUnit baseUnit) throws InterpreterException
     {
-        //todo zrobic
+        environment.declareBasicUnit(baseUnit);
     }
 
     public void visit(ASTnode.Unit unit) throws InterpreterException
     {
-        //todo zrobić
+        if ((environment.getUnits()).get(unit.getName().getValue()) != null)
+            return;;
+        if((environment.getBasicUnits()).get(unit.getParentName().getValue()) == null)
+            throw new InterpreterException("Parent unit is not declared");
+
+        environment.declareUnit(unit);
+    }
+
+    public void visit(ASTnode.UnitResult unitResult) throws InterpreterException
+    {
+        if ((environment.getUnits()).get(unitResult.getName().getValue()) == null && (environment.getBasicUnits()).get(unitResult.getName().getValue()) == null)
+            throw new InterpreterException("Unit not declared!");
+        environment.setLastResult(unitResult);
     }
 
     public void visit(ASTnode.BinOperator binOperator) throws InterpreterException
     {
         binOperator.getLeft().accept(this);
         AST tmpLeft = (AST) environment.getLastResult();
-        //todo spradzić czy tmpLeft jest Num coś tam String -- tu można sprawdzić mnożenie i dodawanie unitów
         binOperator.getRight().accept(this);
         AST tmpRight = (AST)environment.getLastResult();
-        //todo też sprawdzić
         Token operator = binOperator.getOperation();
 
         if((tmpLeft instanceof ASTnode.DoubleNum) && (tmpRight instanceof ASTnode.DoubleNum))
@@ -253,6 +264,19 @@ public class Interpreter
                 String result = ((ASTnode.StringVar)tmpLeft).getValue().getValue() + ((ASTnode.StringVar)tmpRight).getValue().getValue();
                 environment.setLastResult(new ASTnode.StringVar(new Token(0, 0, result, TokenType.STRING)));
             }
+        }
+        else if (tmpLeft instanceof ASTnode.UnitResult && tmpRight instanceof ASTnode.UnitResult)
+        {
+            if (((environment.getUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue()) == null && (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue()) == null)
+            || ((environment.getUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue()) == null && (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue()) == null))
+                throw new InterpreterException("Unit not declared");
+
+            double tmp = 0;
+            if(operator.getType() == TokenType.ADDITIVE_OP)
+                tmp = ((ASTnode.UnitResult) tmpLeft).getNumber() + ((ASTnode.UnitResult) tmpRight).getNumber();
+            else if (operator.getType() == TokenType.MINUS_OP)
+                tmp = ((ASTnode.UnitResult) tmpLeft).getNumber() - ((ASTnode.UnitResult) tmpRight).getNumber();
+            environment.setLastResult(new ASTnode.UnitResult((new Token(0,0, tmp, TokenType.NUMBER)), ((ASTnode.UnitResult) tmpLeft).getName()));
         }
         else throw new InterpreterException("Forbidden operation!");
     }
@@ -358,7 +382,7 @@ public class Interpreter
 
     public void visit(ASTnode.ParamList paramList)
     {
-        //niepotrzebne chyba, rzutuję już wcześniej
+
     }
 
     public void visit(ASTnode.StringVar stringVar)
@@ -371,7 +395,4 @@ public class Interpreter
 
     }
 
-//    public void visit(ASTnode.Num num) {
-//        environment.setLastResult(num);
-//    }
 }

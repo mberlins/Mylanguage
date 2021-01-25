@@ -5,13 +5,18 @@ function foo2(x)
 
 function foo(a, b)
 {
-    a = foo2(5.0);
+    //a = foo2(5.0);
     return b + a;
 }
 
 function main()
 {
+    def g: [WEIGHT];
+    def m: [LENGTH];
+    def kg: 1000 g;
     var x = 5;
+    var u = [2 t];
+    var w = [3 kg];
     var y = 4 + x;
     x = 8;
     var z = 0;
@@ -20,5 +25,7 @@ function main()
         z = 7 + x;
     };
     y = foo(x, y);
-    return z;
+
+    x = foo(w, u);
+    return x;
 }

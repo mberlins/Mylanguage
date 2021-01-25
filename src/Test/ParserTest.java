@@ -111,8 +111,8 @@ class ParserTest
     {
         assertEquals(TokenType.NAME, ((ASTnode.Variable)((ASTnode.VarDeclaration)statements.get(0)).getName()).getName().getType());
         assertEquals("x", ((ASTnode.Variable)((ASTnode.VarDeclaration)statements.get(0)).getName()).getName().getValue());
-        assertEquals("kg", ((ASTnode.Unit)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getName().getValue());
-        assertEquals(2, ((ASTnode.Unit)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getNumber().getIntValue());
+        assertEquals("kg", ((ASTnode.UnitResult)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getName().getValue());
+        assertEquals(2.0, ((ASTnode.UnitResult)((ASTnode.VarDeclaration)statements.get(0)).getAssignmentValue()).getNumber());
     }
 
     @Test

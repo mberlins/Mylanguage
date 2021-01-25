@@ -7,13 +7,24 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Environment {
-    ArrayDeque<CallContext> callStack = new ArrayDeque<>();
-    HashMap<String, AST> funcDefs;
-    Object lastResult;
-    Object lastResultVar;
-    ArrayList<AST> parameters;      // Variables
-    ArrayList<AST> parametersValues;        // wartości poszczególnych parameters
+public class Environment
+{
+    private ArrayDeque<CallContext> callStack = new ArrayDeque<>();
+    private HashMap<String, AST> funcDefs;
+    private Object lastResult;
+    private Object lastResultVar;
+    private ArrayList<AST> parameters;      // Variables
+    private ArrayList<AST> parametersValues;        // wartości poszczególnych parameters
+    private HashMap<String, AST> basicUnits = new HashMap<>();
+    private HashMap<String, AST> units = new HashMap<>();
+
+    public HashMap<String, AST> getBasicUnits() {
+        return basicUnits;
+    }
+
+    public HashMap<String, AST> getUnits() {
+        return units;
+    }
 
     public void setLastResult(Object lastResult) {
         this.lastResult = lastResult;
@@ -93,6 +104,16 @@ public class Environment {
     public AST getVarValue(AST name) throws InterpreterException {
         assert callStack.peek() != null;
         return callStack.peek().getVarValue(name);
+    }
+
+    public void declareBasicUnit(AST unit)
+    {
+        basicUnits.put(((ASTnode.BaseUnit)unit).getName().getValue(), unit);
+    }
+
+    public void declareUnit(AST unit)
+    {
+        units.put(((ASTnode.Unit)unit).getName().getValue(), unit);
     }
 
 }
