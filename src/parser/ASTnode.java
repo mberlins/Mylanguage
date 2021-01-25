@@ -358,6 +358,33 @@ public class ASTnode
         }
     }
 
+    /*public static class Num implements AST
+    {
+        Integer intValue;
+        Double doubleValue;
+
+        public Num(Token number)
+        {
+            if (number.getDoubleValue() == Double.MIN_VALUE)
+                intValue = number.getIntValue();
+            else
+                doubleValue = number.getDoubleValue();
+        }
+
+        public Integer getIntValue() {
+            return intValue;
+        }
+
+        public Double getDoubleValue() {
+            return doubleValue;
+        }
+
+        public void accept(Interpreter visitor)
+        {
+            visitor.visit(this);
+        }
+    }*/
+
     public static class IntNum implements AST
     {
         Integer value;

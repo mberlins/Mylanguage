@@ -42,7 +42,8 @@ public class Interpreter
     {
         environment.addBlockContext();
 
-        if(((ASTnode.FunctionDef)(getFunc(functionDef.getName().getValue()))).getParamList() != null) {
+        if(((ASTnode.FunctionDef)(getFunc(functionDef.getName().getValue()))).getParamList() != null)
+        {
             environment.setParameters(((ASTnode.ParamList) ((ASTnode.FunctionDef) (getFunc(functionDef.getName().getValue()))).getParamList()).getNames());
 
             if (environment.getParameters().size() != environment.getParametersValues().size())
@@ -177,89 +178,73 @@ public class Interpreter
         //todo też sprawdzić
         Token operator = binOperator.getOperation();
 
-        if((tmpLeft instanceof ASTnode.DoubleNum) && (tmpRight instanceof ASTnode.DoubleNum || tmpRight instanceof ASTnode.IntNum))
+        if((tmpLeft instanceof ASTnode.DoubleNum) && (tmpRight instanceof ASTnode.DoubleNum))
         {
-            double result;
+            double result = 0;
             if(operator.getType() == TokenType.MULTIPLICATIVE_OP)
-            {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() * ((ASTnode.DoubleNum)tmpRight).getValue();
-                else
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() * ((ASTnode.IntNum)tmpRight).getValue();
-                environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
-            }
+                result = ((ASTnode.DoubleNum)tmpLeft).getValue() * ((ASTnode.DoubleNum)tmpRight).getValue();
             else  if(operator.getType() == TokenType.DIVIDE_OP)
             {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                {
-                    if (((ASTnode.DoubleNum)tmpRight).getValue() == 0.0) throw new InterpreterException("Dividing by 0 forbidden");
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() / ((ASTnode.DoubleNum)tmpRight).getValue();
-                }
-                else
-                {
-                    if (((ASTnode.IntNum)tmpRight).getValue() == 0) throw new InterpreterException("Dividing by 0 forbidden");
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() / ((ASTnode.IntNum)tmpRight).getValue();
-                }
-                environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
+                if (((ASTnode.DoubleNum) tmpRight).getValue() == 0.0) throw new InterpreterException("Dividing by 0 forbidden");
+                result = ((ASTnode.DoubleNum) tmpLeft).getValue() / ((ASTnode.DoubleNum) tmpRight).getValue();
             }
             else  if(operator.getType() == TokenType.ADDITIVE_OP)
-            {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() + ((ASTnode.DoubleNum)tmpRight).getValue();
-                else
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() + ((ASTnode.IntNum)tmpRight).getValue();
-                environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
-            }
+                result = ((ASTnode.DoubleNum)tmpLeft).getValue() + ((ASTnode.DoubleNum)tmpRight).getValue();
             else  if(operator.getType() == TokenType.MINUS_OP)
-            {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() - ((ASTnode.DoubleNum)tmpRight).getValue();
-                else
-                    result = ((ASTnode.DoubleNum)tmpLeft).getValue() - ((ASTnode.IntNum)tmpRight).getValue();
-                environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
-            }
+                result = ((ASTnode.DoubleNum)tmpLeft).getValue() - ((ASTnode.DoubleNum)tmpRight).getValue();
+
+            environment.setLastResult(new ASTnode.DoubleNum(new Token(0, 0, result, TokenType.NUMBER)));
         }
-        else if((tmpLeft instanceof ASTnode.IntNum) && (tmpRight instanceof ASTnode.DoubleNum || tmpRight instanceof ASTnode.IntNum))
+        else if((tmpLeft instanceof ASTnode.IntNum) && (tmpRight instanceof ASTnode.IntNum))
         {
-            int result;
+            int result = 0;
             if(operator.getType() == TokenType.MULTIPLICATIVE_OP)
-            {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                    result = (int) (((ASTnode.IntNum)tmpLeft).getValue() * ((ASTnode.DoubleNum)tmpRight).getValue());
-                else
-                    result = ((ASTnode.IntNum)tmpLeft).getValue() * ((ASTnode.IntNum)tmpRight).getValue();
-                environment.setLastResult(new ASTnode.IntNum(new Token(0, 0, result, TokenType.NUMBER)));
-            }
+                result = ((ASTnode.IntNum)tmpLeft).getValue() * ((ASTnode.IntNum)tmpRight).getValue();
             else  if(operator.getType() == TokenType.DIVIDE_OP)
             {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                {
-                    if (((ASTnode.DoubleNum)tmpRight).getValue() == 0.0) throw new InterpreterException("Dividing by 0 forbidden");
-                    result = (int) (((ASTnode.IntNum)tmpLeft).getValue() / ((ASTnode.DoubleNum)tmpRight).getValue());
-                }
-                else
-                {
-                    if (((ASTnode.IntNum)tmpRight).getValue() == 0) throw new InterpreterException("Dividing by 0 forbidden");
-                    result = ((ASTnode.IntNum)tmpLeft).getValue() / ((ASTnode.IntNum)tmpRight).getValue();
-                }
-                environment.setLastResult(new ASTnode.IntNum(new Token(0, 0, result, TokenType.NUMBER)));
+                if (((ASTnode.IntNum)tmpRight).getValue() == 0) throw new InterpreterException("Dividing by 0 forbidden");
+                result = ((ASTnode.IntNum)tmpLeft).getValue() / ((ASTnode.IntNum)tmpRight).getValue();
             }
             else  if(operator.getType() == TokenType.ADDITIVE_OP)
-            {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                    result = (int) (((ASTnode.IntNum)tmpLeft).getValue() + ((ASTnode.DoubleNum)tmpRight).getValue());
-                else
-                    result = ((ASTnode.IntNum)tmpLeft).getValue() + ((ASTnode.IntNum)tmpRight).getValue();
-                environment.setLastResult(new ASTnode.IntNum(new Token(0, 0, result, TokenType.NUMBER)));
-            }
+                result = ((ASTnode.IntNum)tmpLeft).getValue() + ((ASTnode.IntNum)tmpRight).getValue();
             else  if(operator.getType() == TokenType.MINUS_OP)
+                result = ((ASTnode.IntNum)tmpLeft).getValue() - ((ASTnode.IntNum)tmpRight).getValue();
+
+            environment.setLastResult(new ASTnode.IntNum(new Token(0, 0, result, TokenType.NUMBER)));
+        }
+        else if((tmpLeft instanceof ASTnode.IntNum) && (tmpRight instanceof ASTnode.DoubleNum))
+        {
+            double result = 0;
+            if(operator.getType() == TokenType.MULTIPLICATIVE_OP)
+                result = ((ASTnode.IntNum)tmpLeft).getValue() * ((ASTnode.DoubleNum)tmpRight).getValue();
+            else  if(operator.getType() == TokenType.DIVIDE_OP)
             {
-                if (tmpRight instanceof ASTnode.DoubleNum)
-                    result = (int) (((ASTnode.IntNum)tmpLeft).getValue() - ((ASTnode.DoubleNum)tmpRight).getValue());
-                else
-                    result = ((ASTnode.IntNum)tmpLeft).getValue() - ((ASTnode.IntNum)tmpRight).getValue();
-                environment.setLastResult(new ASTnode.IntNum(new Token(0, 0, result, TokenType.NUMBER)));
+                if (((ASTnode.DoubleNum)tmpRight).getValue() == 0.0) throw new InterpreterException("Dividing by 0 forbidden");
+                result = ((ASTnode.IntNum)tmpLeft).getValue() / ((ASTnode.DoubleNum)tmpRight).getValue();
             }
+            else  if(operator.getType() == TokenType.ADDITIVE_OP)
+                result = ((ASTnode.IntNum)tmpLeft).getValue() + ((ASTnode.DoubleNum)tmpRight).getValue();
+            else  if(operator.getType() == TokenType.MINUS_OP)
+                result = ((ASTnode.IntNum)tmpLeft).getValue() - ((ASTnode.DoubleNum)tmpRight).getValue();
+
+            environment.setLastResult(new ASTnode.IntNum(new Token(0, 0, result, TokenType.NUMBER)));
+        }
+        else if((tmpLeft instanceof ASTnode.DoubleNum) && (tmpRight instanceof ASTnode.IntNum))
+        {
+            double result = 0;
+            if(operator.getType() == TokenType.MULTIPLICATIVE_OP)
+                result = ((ASTnode.DoubleNum)tmpLeft).getValue() * ((ASTnode.IntNum)tmpRight).getValue();
+            else  if(operator.getType() == TokenType.DIVIDE_OP)
+            {
+                if (((ASTnode.IntNum)tmpRight).getValue() == 0) throw new InterpreterException("Dividing by 0 forbidden");
+                result = ((ASTnode.DoubleNum)tmpLeft).getValue() / ((ASTnode.IntNum)tmpRight).getValue();
+            }
+            else  if(operator.getType() == TokenType.ADDITIVE_OP)
+                result = ((ASTnode.DoubleNum)tmpLeft).getValue() + ((ASTnode.IntNum)tmpRight).getValue();
+            else  if(operator.getType() == TokenType.MINUS_OP)
+                result = ((ASTnode.DoubleNum)tmpLeft).getValue() - ((ASTnode.IntNum)tmpRight).getValue();
+
+            environment.setLastResult(new ASTnode.IntNum(new Token(0, 0, result, TokenType.NUMBER)));
         }
         else if(tmpLeft instanceof ASTnode.StringVar && tmpRight instanceof ASTnode.StringVar)
         {
@@ -275,9 +260,82 @@ public class Interpreter
     public void visit(ASTnode.BinLogicOperator binLogicOperator) throws  InterpreterException
     {
         binLogicOperator.getLeft().accept(this);
-        if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
-                || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
-                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() == null))) throw new InterpreterException("280");
+        Object leftExp = environment.getLastResult();
+        binLogicOperator.getRight().accept(this);
+        Object rightExp = environment.getLastResult();
+
+        if (leftExp instanceof Boolean && rightExp instanceof Boolean)
+        {
+            if (binLogicOperator.getOperation().getType() == TokenType.AND_OP)
+                environment.setLastResult((Boolean)leftExp && (Boolean)rightExp);
+            else if (binLogicOperator.getOperation().getType() == TokenType.OR_OP)
+                environment.setLastResult((Boolean)leftExp || (Boolean)rightExp);
+            else if (binLogicOperator.getOperation().getType() == TokenType.EQUAL_OP)
+                environment.setLastResult((Boolean)leftExp == (Boolean)rightExp);
+            else if (binLogicOperator.getOperation().getType() == TokenType.UNEQUAL_OP)
+                environment.setLastResult((Boolean)leftExp != (Boolean)rightExp);
+            else throw new InterpreterException("Forbidden logical Operation");
+        }
+        else if(leftExp instanceof ASTnode.IntNum && rightExp instanceof ASTnode.IntNum)
+        {
+            if(binLogicOperator.getOperation().getType() == TokenType.EQUAL_OP)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue().equals(((ASTnode.IntNum) rightExp).getValue()));
+            else if(binLogicOperator.getOperation().getType() == TokenType.UNEQUAL_OP)
+                environment.setLastResult(!((ASTnode.IntNum) leftExp).getValue().equals(((ASTnode.IntNum) rightExp).getValue()));
+            else if(binLogicOperator.getOperation().getType() == TokenType.BIGGER)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() > ((ASTnode.IntNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.BIGGER_EQUAL)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() >= ((ASTnode.IntNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() < ((ASTnode.IntNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER_EQUAL)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() <= ((ASTnode.IntNum) rightExp).getValue());
+        }
+        else if(leftExp instanceof ASTnode.DoubleNum && rightExp instanceof ASTnode.DoubleNum)
+        {
+            if(binLogicOperator.getOperation().getType() == TokenType.EQUAL_OP)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue().equals(((ASTnode.DoubleNum) rightExp).getValue()));
+            else if(binLogicOperator.getOperation().getType() == TokenType.UNEQUAL_OP)
+                environment.setLastResult(!((ASTnode.DoubleNum) leftExp).getValue().equals(((ASTnode.DoubleNum) rightExp).getValue()));
+            else if(binLogicOperator.getOperation().getType() == TokenType.BIGGER)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() > ((ASTnode.DoubleNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.BIGGER_EQUAL)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() >= ((ASTnode.DoubleNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() < ((ASTnode.DoubleNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER_EQUAL)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() <= ((ASTnode.DoubleNum) rightExp).getValue());
+        }
+        else if(leftExp instanceof ASTnode.IntNum && rightExp instanceof ASTnode.DoubleNum)
+        {
+            if(binLogicOperator.getOperation().getType() == TokenType.BIGGER)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() > ((ASTnode.DoubleNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.BIGGER_EQUAL)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() >= ((ASTnode.DoubleNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() < ((ASTnode.DoubleNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER_EQUAL)
+                environment.setLastResult(((ASTnode.IntNum) leftExp).getValue() <= ((ASTnode.DoubleNum) rightExp).getValue());
+        }
+        else if(leftExp instanceof ASTnode.DoubleNum && rightExp instanceof ASTnode.IntNum)
+        {
+            if(binLogicOperator.getOperation().getType() == TokenType.BIGGER)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() > ((ASTnode.IntNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.BIGGER_EQUAL)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() >= ((ASTnode.IntNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() < ((ASTnode.IntNum) rightExp).getValue());
+            else if(binLogicOperator.getOperation().getType() == TokenType.SMALLER_EQUAL)
+                environment.setLastResult(((ASTnode.DoubleNum) leftExp).getValue() <= ((ASTnode.IntNum) rightExp).getValue());
+        }
+        else if(leftExp instanceof ASTnode.StringVar && rightExp instanceof ASTnode.StringVar)
+        {
+            if(binLogicOperator.getOperation().getType() == TokenType.EQUAL_OP)
+                environment.setLastResult(((ASTnode.StringVar) leftExp).getValue().getValue().equals(((ASTnode.StringVar) rightExp).getValue().getValue()));
+            else if(binLogicOperator.getOperation().getType() == TokenType.UNEQUAL_OP)
+                environment.setLastResult(!((ASTnode.StringVar) leftExp).getValue().getValue().equals(((ASTnode.StringVar) rightExp).getValue().getValue()));
+        }
+        else throw new InterpreterException("Forbidden logical operation!");
 
     }
 
@@ -312,4 +370,8 @@ public class Interpreter
     {
 
     }
+
+//    public void visit(ASTnode.Num num) {
+//        environment.setLastResult(num);
+//    }
 }

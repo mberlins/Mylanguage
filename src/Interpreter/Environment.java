@@ -15,7 +15,7 @@ public class Environment {
     ArrayList<AST> parameters;      // Variables
     ArrayList<AST> parametersValues;        // wartości poszczególnych parameters
 
-    public void setLastResult(AST lastResult) {
+    public void setLastResult(Object lastResult) {
         this.lastResult = lastResult;
     }
 

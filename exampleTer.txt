@@ -14,7 +14,11 @@ function main()
     var x = 5;
     var y = 4 + x;
     x = 8;
+    var z = 0;
+    if ((x == 7 | x == 8) & z == 0)
+    {
+        z = 7 + x;
+    };
     y = foo(x, y);
-    var z = 5 / 2;
     return z;
 }
