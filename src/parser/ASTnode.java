@@ -473,10 +473,23 @@ public class ASTnode
     {
         Token name;
         Double number;
+        Double multiplicity;
+        Token parentName;
 
         public UnitResult(Token number, Token name)
         {
             this.name = name;
+            if (number.getIntValue() == Integer.MIN_VALUE)
+                this.number = number.getDoubleValue();
+            else
+                this.number = (double)number.getIntValue();
+        }
+
+        public UnitResult(Token number, Token name, Double multiplicity, Token parentName)
+        {
+            this.name = name;
+            this.multiplicity = multiplicity;
+            this.parentName = parentName;
             if (number.getIntValue() == Integer.MIN_VALUE)
                 this.number = number.getDoubleValue();
             else
@@ -488,6 +501,22 @@ public class ASTnode
 
         public Double getNumber() {
             return number;
+        }
+
+        public Double getMultiplicity() {
+            return multiplicity;
+        }
+
+        public void setMultiplicity(Double multiplicity) {
+            this.multiplicity = multiplicity;
+        }
+
+        public Token getParentName() {
+            return parentName;
+        }
+
+        public void setParentName(Token parentName) {
+            this.parentName = parentName;
         }
 
         public void accept(Interpreter visitor) throws InterpreterException {

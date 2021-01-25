@@ -178,6 +178,24 @@ public class Interpreter
     {
         if ((environment.getUnits()).get(unitResult.getName().getValue()) == null && (environment.getBasicUnits()).get(unitResult.getName().getValue()) == null)
             throw new InterpreterException("Unit not declared!");
+
+        AST unit = (environment.getUnits()).get(((ASTnode.UnitResult) unitResult).getName().getValue());
+        Token parent = null;
+        double multiplicity = 1;
+
+        if (unit != null)
+        {
+            parent = ((ASTnode.Unit)unit).getParentName();
+            multiplicity = Math.max(((ASTnode.Unit)unit).getNumber().getDoubleValue(), ((ASTnode.Unit)unit).getNumber().getIntValue());
+        }
+        if (unit == null)
+        {
+            unit = (environment.getBasicUnits()).get(((ASTnode.UnitResult) unitResult).getName().getValue());
+            parent = ((ASTnode.BaseUnit)unit).getName();
+        }
+
+        unitResult.setMultiplicity(multiplicity);
+        unitResult.setParentName(parent);
         environment.setLastResult(unitResult);
     }
 
@@ -267,16 +285,67 @@ public class Interpreter
         }
         else if (tmpLeft instanceof ASTnode.UnitResult && tmpRight instanceof ASTnode.UnitResult)
         {
-            if (((environment.getUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue()) == null && (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue()) == null)
-            || ((environment.getUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue()) == null && (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue()) == null))
-                throw new InterpreterException("Unit not declared");
-
             double tmp = 0;
+//            AST left = (environment.getUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue());
+//            AST right = (environment.getUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue());
+//            Token leftParent = null;
+//            Token rightParent = null;
+//            double leftMultiplicity = 1;
+//            double rightMultiplicity = 1;
+//
+//            if (left != null)
+//            {
+//                leftParent = ((ASTnode.Unit)left).getParentName();
+//                leftMultiplicity = Math.max(((ASTnode.Unit)left).getNumber().getDoubleValue(), ((ASTnode.Unit)left).getNumber().getIntValue());
+//            }
+//            if (right != null)
+//            {
+//                rightParent = ((ASTnode.Unit)right).getParentName();
+//                rightMultiplicity = Math.max(((ASTnode.Unit)right).getNumber().getDoubleValue(), ((ASTnode.Unit)right).getNumber().getIntValue()) ;
+//            }
+//            if (left == null)
+//            {
+//                left = (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpLeft).getName().getValue());
+//                leftParent = ((ASTnode.BaseUnit)left).getName();
+//            }
+//            if (right == null)
+//            {
+//                right = (environment.getBasicUnits()).get(((ASTnode.UnitResult) tmpRight).getName().getValue());
+//                rightParent = ((ASTnode.BaseUnit)right).getName();
+//            }
+
+            if (!((ASTnode.UnitResult) tmpLeft).getParentName().getValue().equals(((ASTnode.UnitResult) tmpRight).getParentName().getValue()))
+                throw new InterpreterException("Impossible to add units from different dimensions");
+
+//            ((ASTnode.UnitResult) tmpLeft).setMultiplicity(leftMultiplicity);
+//            ((ASTnode.UnitResult) tmpRight).setMultiplicity(rightMultiplicity);
+
             if(operator.getType() == TokenType.ADDITIVE_OP)
-                tmp = ((ASTnode.UnitResult) tmpLeft).getNumber() + ((ASTnode.UnitResult) tmpRight).getNumber();
+            {
+                if (((ASTnode.UnitResult) (tmpLeft)).getName().getValue().equals(((ASTnode.UnitResult) (tmpRight)).getName().getValue()))
+                {
+                    tmp = ((ASTnode.UnitResult) tmpLeft).getNumber() + ((ASTnode.UnitResult) tmpRight).getNumber();
+                    environment.setLastResult(new ASTnode.UnitResult((new Token(0,0, tmp, TokenType.NUMBER)), ((ASTnode.UnitResult)(tmpLeft)).getName(), ((ASTnode.UnitResult) tmpLeft).getMultiplicity(), ((ASTnode.UnitResult) tmpLeft).getParentName()));
+                }
+                else {
+                    tmp = (((ASTnode.UnitResult) tmpLeft).getMultiplicity() * ((ASTnode.UnitResult) tmpLeft).getNumber()) + ((ASTnode.UnitResult) tmpRight).getMultiplicity() * (((ASTnode.UnitResult) tmpRight).getNumber());
+                    tmp = tmp/((ASTnode.UnitResult) tmpLeft).getMultiplicity();
+                    environment.setLastResult(new ASTnode.UnitResult((new Token(0, 0, tmp, TokenType.NUMBER)), ((ASTnode.UnitResult)(tmpLeft)).getName(),((ASTnode.UnitResult) tmpLeft).getMultiplicity(), ((ASTnode.UnitResult) tmpLeft).getParentName()));
+                }
+            }
             else if (operator.getType() == TokenType.MINUS_OP)
-                tmp = ((ASTnode.UnitResult) tmpLeft).getNumber() - ((ASTnode.UnitResult) tmpRight).getNumber();
-            environment.setLastResult(new ASTnode.UnitResult((new Token(0,0, tmp, TokenType.NUMBER)), ((ASTnode.UnitResult) tmpLeft).getName()));
+            {
+                if (((ASTnode.UnitResult) (tmpLeft)).getName().getValue().equals(((ASTnode.UnitResult) (tmpRight)).getName().getValue()))
+                {
+                    tmp = ((ASTnode.UnitResult) tmpLeft).getNumber() - ((ASTnode.UnitResult) tmpRight).getNumber();
+                    environment.setLastResult(new ASTnode.UnitResult((new Token(0,0, tmp, TokenType.NUMBER)), ((ASTnode.UnitResult)(tmpLeft)).getName(), ((ASTnode.UnitResult) tmpLeft).getMultiplicity(), ((ASTnode.UnitResult) tmpLeft).getParentName()));
+                }
+                else {
+                    tmp = (((ASTnode.UnitResult) tmpLeft).getMultiplicity() * ((ASTnode.UnitResult) tmpLeft).getNumber()) - ((ASTnode.UnitResult) tmpRight).getMultiplicity() * (((ASTnode.UnitResult) tmpRight).getNumber());
+                    tmp = tmp/((ASTnode.UnitResult) tmpLeft).getMultiplicity();
+                    environment.setLastResult(new ASTnode.UnitResult((new Token(0, 0, tmp, TokenType.NUMBER)), ((ASTnode.UnitResult)(tmpLeft)).getName(), ((ASTnode.UnitResult) tmpLeft).getMultiplicity(), ((ASTnode.UnitResult) tmpLeft).getParentName()));
+                }
+            }
         }
         else throw new InterpreterException("Forbidden operation!");
     }
@@ -359,8 +428,11 @@ public class Interpreter
             else if(binLogicOperator.getOperation().getType() == TokenType.UNEQUAL_OP)
                 environment.setLastResult(!((ASTnode.StringVar) leftExp).getValue().getValue().equals(((ASTnode.StringVar) rightExp).getValue().getValue()));
         }
-        else throw new InterpreterException("Forbidden logical operation!");
+        else if(leftExp instanceof  ASTnode.UnitResult && rightExp instanceof ASTnode.UnitResult)
+        {
 
+        }
+        else throw new InterpreterException("Forbidden logical operation!");
     }
 
     //odwiedzona variable będzie ustawiała dwa pola env
