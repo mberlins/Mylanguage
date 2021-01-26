@@ -13,8 +13,8 @@ public class Environment
     private HashMap<String, AST> funcDefs;
     private Object lastResult;
     private Object lastResultVar;
-    private ArrayList<AST> parameters;      // Variables
-    private ArrayList<AST> parametersValues;        // wartości poszczególnych parameters
+    private ArrayList<AST> parameters;      // Variables lista argumentów funkcji zadeklarowanych, wykonuje się w każdym callStacku
+    private ArrayList<AST> parametersValues;        // Parametry funckji przy call function
     private HashMap<String, AST> basicUnits = new HashMap<>();
     private HashMap<String, AST> units = new HashMap<>();
 
@@ -104,6 +104,12 @@ public class Environment
     public AST getVarValue(AST name) throws InterpreterException {
         assert callStack.peek() != null;
         return callStack.peek().getVarValue(name);
+    }
+
+    public boolean checkVar(AST name)
+    {
+        assert callStack.peek() != null;
+        return callStack.peek().checkVarValue(name);
     }
 
     public void declareBasicUnit(AST unit)

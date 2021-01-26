@@ -64,4 +64,14 @@ public class CallContext {
         }
         throw new InterpreterException("Variable " + ((ASTnode.Variable) (name)).getName().getValue() + " is not declared in this scope");
     }
+
+    public boolean checkVarValue(AST name)
+    {
+        AST tmp = null;
+        if ((tmp = localVariablesStack.get(localVariablesStack.size() - 1).get(((ASTnode.Variable) (name)).getName().getValue())) != null)
+        {
+            return true;
+        }
+        return false;
+    }
 }

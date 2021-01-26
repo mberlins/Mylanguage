@@ -380,6 +380,12 @@ public class ASTnode
         {
             visitor.visit(this);
         }
+
+        @Override
+        public String toString()
+        {
+            return "" + value;
+        }
     }
 
     public static class DoubleNum implements AST
@@ -404,6 +410,12 @@ public class ASTnode
         {
             visitor.visit(this);
         }
+
+        @Override
+        public String toString()
+        {
+            return "" + value;
+        }
     }
 
     public static class StringVar implements AST
@@ -421,6 +433,12 @@ public class ASTnode
         public void accept(Interpreter visitor)
         {
             visitor.visit(this);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "" + value.getValue();
         }
     }
 
@@ -526,6 +544,15 @@ public class ASTnode
             return (this.multiplicity * this.number) > (unitResult.getMultiplicity() * unitResult.getNumber());
         }
 
+        public boolean isSmaller(UnitResult unitResult) throws InterpreterException
+        {
+            String name = this.name.getValue();
+            String nameBis = unitResult.getName().getValue();
+            if (!this.parentName.getValue().equals(unitResult.parentName.getValue())) throw new InterpreterException("Impossible to compare units from different dimensions, units: " + name + " and " + nameBis);
+
+            return (this.multiplicity * this.number) < (unitResult.getMultiplicity() * unitResult.getNumber());
+        }
+
         public boolean isBiggerEqual(UnitResult unitResult) throws InterpreterException
         {
             String name = this.name.getValue();
@@ -542,6 +569,12 @@ public class ASTnode
             if (!this.parentName.getValue().equals(unitResult.parentName.getValue())) throw new InterpreterException("Impossible to compare units from different dimensions, units: " + name + " and " + nameBis);
 
             return (this.multiplicity * this.number) <= (unitResult.getMultiplicity() * unitResult.getNumber());
+        }
+
+        @Override
+        public String toString()
+        {
+            return "" + number + " " + name.getValue();
         }
     }
 

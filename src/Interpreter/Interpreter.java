@@ -143,6 +143,10 @@ public class Interpreter
     public void visit(ASTnode.VarDeclaration varDeclaration) throws InterpreterException
     {
         AST var = varDeclaration.getName();
+
+        if (environment.checkVar(var))
+            throw new InterpreterException("Variable already declared in this scope");
+
         if (varDeclaration.getAssignmentValue() != null)
             varDeclaration.getAssignmentValue().accept(this);
         if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
@@ -159,7 +163,11 @@ public class Interpreter
     public void visit(ASTnode.PrintCall printCall) throws InterpreterException
     {
         printCall.getPrintCall().accept(this);
-        System.out.println(environment.getLastResult());
+        if(environment.getLastResult() instanceof ASTnode.StringVar || environment.getLastResult() instanceof ASTnode.IntNum || environment.getLastResult() instanceof ASTnode.DoubleNum
+                || environment.getLastResult() instanceof ASTnode.UnitResult)
+            System.out.print(environment.getLastResult());
+        else
+            throw new InterpreterException("Illegal printCall argument");
     }
 
     public void visit(ASTnode.BaseUnit baseUnit) throws InterpreterException
@@ -418,7 +426,7 @@ public class Interpreter
             else if (binLogicOperator.getOperation().getType() == TokenType.BIGGER)
                 environment.setLastResult(((ASTnode.UnitResult) leftExp).isBigger((ASTnode.UnitResult)rightExp));
             else if (binLogicOperator.getOperation().getType() == TokenType.SMALLER)
-                environment.setLastResult(!(((ASTnode.UnitResult) leftExp).isBigger((ASTnode.UnitResult)rightExp)));
+                environment.setLastResult(((ASTnode.UnitResult) leftExp).isSmaller((ASTnode.UnitResult)rightExp));
             else if (binLogicOperator.getOperation().getType() == TokenType.BIGGER_EQUAL)
                 environment.setLastResult(((ASTnode.UnitResult) leftExp).isBiggerEqual((ASTnode.UnitResult)rightExp));
             else if (binLogicOperator.getOperation().getType() == TokenType.SMALLER_EQUAL)
@@ -431,7 +439,7 @@ public class Interpreter
     //odwiedzona variable będzie ustawiała dwa pola env
     public void visit(ASTnode.Variable v) throws  InterpreterException
     {
-        environment.setLastResultVar(v);
+        //environment.setLastResultVar(v);
         environment.setLastResult(environment.getVarValue(v));
     }
 

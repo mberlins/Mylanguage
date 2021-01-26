@@ -1,6 +1,5 @@
 package parser;
 
-import Interpreter.INodeVisitor;
 import Interpreter.Interpreter;
 import Interpreter.InterpreterException;
 

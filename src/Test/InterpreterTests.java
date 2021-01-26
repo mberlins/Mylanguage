@@ -603,7 +603,7 @@ public class InterpreterTests
         Parser parser = new Parser("function main(){" +
                 "var x = 3;" +
                 "var y = 4;" +
-                "var x = foo(x, y);" +
+                "x = foo(x, y);" +
                 "return x;" +
                 "}" +
                 "function foo(a, b){" +
@@ -624,7 +624,7 @@ public class InterpreterTests
                 "var x = [1971 m];" +
                 "def km: 1000 m;" +
                 "var y = [1 km];" +
-                "var x = foo(x, y);" +
+                "x = foo(x, y);" +
                 "return x;" +
                 "}" +
                 "function foo(a, b){" +
@@ -644,7 +644,7 @@ public class InterpreterTests
         Parser parser = new Parser("function main(){" +
                 "var x = 5;" +
                 "var y = 4;" +
-                "var x = foo(x, y);" +
+                "x = foo(x, y);" +
                 "return x;" +
                 "}" +
                 "function foo(a, b){" +
@@ -655,6 +655,50 @@ public class InterpreterTests
         Object result = visitor.run();
         assertTrue(result instanceof ASTnode.IntNum);
         assertEquals(20, ((ASTnode.IntNum) result).getValue());
+    }
+
+    @Test
+    public void PrintTest() throws  InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){" +
+                "var x = 5;" +
+                "var y = 4;" +
+                "x = x + y;" +
+                "print x;" +
+                "}");
+        Interpreter visitor = new Interpreter(parser.program());
+        Object result = visitor.run();
+        assertTrue(result instanceof ASTnode.IntNum);
+        assertEquals(9, ((ASTnode.IntNum) result).getValue().intValue());
+    }
+
+    @Test
+    public void PrintTestBis() throws  InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){" +
+                "var x = \"ab\";" +
+                "var y = \"c\";" +
+                "print x + y;" +
+                "}");
+        Interpreter visitor = new Interpreter(parser.program());
+        Object result = visitor.run();
+        assertTrue(result instanceof ASTnode.StringVar);
+        assertEquals("abc", ((ASTnode.StringVar) result).getValue().getValue());
+    }
+
+    @Test
+    public void PrintTestTer() throws  InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){" +
+                "def m: [DISTANCE];" +
+                "var x = [1971 m];" +
+                "print x;" +
+                "}");
+
+        Interpreter visitor = new Interpreter(parser.program());
+        Object result = visitor.run();
+        assertTrue(result instanceof ASTnode.UnitResult);
+        assertEquals("1971.0 m", ((ASTnode.UnitResult) result).getNumber() + " " + ((ASTnode.UnitResult) result).getName().getValue());
     }
 
     // **************************************************************************************************************  negative tests
@@ -682,7 +726,7 @@ public class InterpreterTests
         Parser parser = new Parser("function main(){" +
                 "var x = 5;" +
                 "var y = 4;" +
-                "var x = foo(x, y);" +
+                "x = foo(x, y);" +
                 "return x;" +
                 "}");
         String message = " ";
@@ -974,5 +1018,25 @@ public class InterpreterTests
             message = e.toString();
         }
         assertEquals("Forbidden logical Operation at line 1", message);
+    }
+
+    @Test
+    public void WrongRedeclarationTest() throws  InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){" +
+                "var y = 7.0;" +
+                "var x = 6.0;" +
+                "var x = 5.0;" +
+                "return y / x;" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Variable already declared in this scope", message);
     }
 }
