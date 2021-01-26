@@ -104,7 +104,7 @@ public class Interpreter
     public void visit(ASTnode.IfStatement ifStatement) throws InterpreterException
     {
         ifStatement.getCondition().accept(this);
-        if(!(environment.getLastResult() instanceof Boolean)) throw new InterpreterException("Wrong if statement parameter"); //todo zmien
+        if(!(environment.getLastResult() instanceof Boolean)) throw new InterpreterException("Wrong if statement parameter");
 
         if((Boolean) (environment.getLastResult()))
             ifStatement.getIfBody().accept(this);
@@ -118,7 +118,7 @@ public class Interpreter
     public void visit(ASTnode.WhileStatement whileStatement) throws InterpreterException
     {
         whileStatement.getCondition().accept(this);
-        if(!(environment.getLastResult() instanceof Boolean)) throw new InterpreterException("Wrong while statement parameter"); //todo zmien
+        if(!(environment.getLastResult() instanceof Boolean)) throw new InterpreterException("Wrong while statement parameter");
 
         while((Boolean) (environment.getLastResult()))
         {
@@ -135,7 +135,7 @@ public class Interpreter
 
         if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
                 || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
-                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() instanceof ASTnode.UnitResult))) throw new InterpreterException("134");
+                || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() instanceof ASTnode.UnitResult))) throw new InterpreterException("Wrong assignment at line " + ((ASTnode.Variable)(assignment.getVariable())).getName().getY_coor());
 
         environment.updateVarInCurrentBlockContext(var, (AST) environment.getLastResult());
     }
@@ -148,7 +148,7 @@ public class Interpreter
         if(!((environment.getLastResult() instanceof ASTnode.IntNum) || (environment.getLastResult() instanceof ASTnode.DoubleNum)
                 || (environment.getLastResult() instanceof ASTnode.Unit) || (environment.getLastResult() instanceof ASTnode.BaseUnit)
                 || (environment.getLastResult() instanceof ASTnode.StringVar) || (environment.getLastResult() == null
-                || (environment.getLastResult() instanceof ASTnode.UnitResult)))) throw new InterpreterException("146");
+                || (environment.getLastResult() instanceof ASTnode.UnitResult)))) throw new InterpreterException("Wrong assignment at line "+ ((ASTnode.Variable)(varDeclaration.getName())).getName().getY_coor());
 
         if (varDeclaration.getAssignmentValue() != null)
             environment.declareVarInCurrentScope(var, (AST) environment.getLastResult());
@@ -285,6 +285,8 @@ public class Interpreter
                 String result = ((ASTnode.StringVar)tmpLeft).getValue().getValue() + ((ASTnode.StringVar)tmpRight).getValue().getValue();
                 environment.setLastResult(new ASTnode.StringVar(new Token(0, 0, result, TokenType.STRING)));
             }
+            else throw new InterpreterException("Operation impossible on string type at line: " + operator.getY_coor());
+
         }
         else if (tmpLeft instanceof ASTnode.UnitResult && tmpRight instanceof ASTnode.UnitResult)
         {
@@ -319,6 +321,7 @@ public class Interpreter
                     environment.setLastResult(new ASTnode.UnitResult((new Token(0, 0, tmp, TokenType.NUMBER)), ((ASTnode.UnitResult)(tmpLeft)).getName(), ((ASTnode.UnitResult) tmpLeft).getMultiplicity(), ((ASTnode.UnitResult) tmpLeft).getParentName()));
                 }
             }
+            else throw new InterpreterException("Operation impossible on Unit type at line: " + operator.getY_coor());
         }
         else throw new InterpreterException("Forbidden operation at line " + binOperator.getOperation().getY_coor());
     }

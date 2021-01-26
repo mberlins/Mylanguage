@@ -737,6 +737,26 @@ public class InterpreterTests
     }
 
     @Test
+    public void WrongMultiplicationTest() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "var x = \"b\";\r" +
+                "var y = \"a\";\r" +
+                "var z = x * y;\r" +
+                "return z;\r" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Operation impossible on string type at line: 3", message);
+    }
+
+    @Test
     public void UnitsWrongAdditionTest() throws InterpreterException, ParserException
     {
         Parser parser = new Parser("function main(){\r" +
@@ -756,6 +776,27 @@ public class InterpreterTests
             message = e.toString();
         }
         assertEquals("Impossible to add units from different dimensions at line 2", message);
+    }
+
+    @Test
+    public void UnitsMultiplicationTest() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "def m: [DISTANCE];\r" +
+                "var x = [1971 m];\r" +
+                "var y = [13 m];\r" +
+                "var z = x * y;\r" +
+                "return z;\r" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Operation impossible on Unit type at line: 4", message);
     }
 
     @Test
@@ -783,7 +824,7 @@ public class InterpreterTests
     }
 
     @Test
-    public void WrongComparisonTestBis() throws InterpreterException, ParserException
+    public void WrongComparisonTestBis() throws InterpreterException, ParserException                                       //tutaj specjalne wyrazenie
     {
         Parser parser = new Parser("function main(){\r" +
                 "var x = 13;\r" +
@@ -803,5 +844,135 @@ public class InterpreterTests
             message = e.toString();
         }
         assertEquals("Forbidden logical Operation at line 3", message);
+    }
+
+    @Test
+    public void UnitsWrongComparisonTest() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "def m: [DISTANCE];\r" +
+                "var x = [1971 m];\r" +
+                "def kg: [WEIGHT];\r" +
+                "var y = [13 kg];\r" +
+                "while(x <= y){\r" +
+                "x = x + 1;\r" +
+                "y = y + x;\r" +
+                "};\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Impossible to compare units from different dimensions, units: m and kg", message);
+    }
+
+    @Test
+    public void WrongWhileTest() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "def m: [DISTANCE];\r" +
+                "var x = [1971 m];\r" +
+                "while(x){\r" +
+                "x = x + 1;\r" +
+                "};\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Wrong while statement parameter", message);
+    }
+
+    @Test
+    public void WrongIfTest() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "def m: [DISTANCE];\r" +
+                "var x = [1971 m];\r" +
+                "if(x){\r" +
+                "x = x + 1;\r" +
+                "};\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Wrong if statement parameter", message);
+    }
+
+    @Test
+    public void WrongIfTestTer() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "def m: [DISTANCE];\r" +
+                "var x = [1971 m];\r" +
+                "if( 5 < 6 < 7 < 9 == 10){\r" +
+                "x = x + 1;\r" +
+                "};\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Forbidden logical Operation at line 3", message);
+    }
+
+    @Test
+    public void WrongDividingTest() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "var x = 13;\r" +
+                "var y = 0;\r" +
+                "x = x / y;\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Dividing by 0 forbidden at line 2", message);
+    }
+
+    @Test
+    public void WrongIfTestBis() throws InterpreterException, ParserException
+    {
+        Parser parser = new Parser("function main(){\r" +
+                "if((5 == 5) > (3 != 3)){\r" +
+                "var x = 3;\r" +
+                "};\r" +
+                "}\r");
+        String message = " ";
+        try {
+            Interpreter visitor = new Interpreter(parser.program());
+            Object result = visitor.run();
+        }
+        catch (InterpreterException e) {
+            message = e.toString();
+        }
+        assertEquals("Forbidden logical Operation at line 1", message);
     }
 }

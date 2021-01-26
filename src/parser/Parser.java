@@ -65,7 +65,7 @@ public class Parser
         if (currentToken.getType() == TokenType.FUNCTION)
             proceed(type.getType());
         else
-            throw new ParserException("Expected wrong Token type", currentToken.getX_coor(), currentToken.getY_coor());
+            throw new ParserException("Expected function declaration", currentToken.getX_coor(), currentToken.getY_coor());
 
         Token name = currentToken;
         proceed(TokenType.NAME);
@@ -428,8 +428,10 @@ public class Parser
             return leaf;
         else if ((leaf = variable()) != null)
             return leaf;
+        else if (token.getType() == TokenType.RIGHT_PARENTHESIS)
+            throw new ParserException("Statement is missing parameters" , currentToken.getX_coor(), currentToken.getY_coor());
 
-        throw new ParserException("Unknown Token Type" , currentToken.getX_coor(), currentToken.getY_coor());
+        throw new ParserException("Wrong Token Type" , currentToken.getX_coor(), currentToken.getY_coor());
         //return variable();
     }
 

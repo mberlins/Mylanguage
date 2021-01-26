@@ -315,16 +315,17 @@ class ParserTest
 
     @Test
     void negativeTestBis() throws ParserException, FileNotFoundException {
-        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\exampleBis.txt");
-        Parser parser5 = new Parser(file);
+        Parser parser5 = new Parser("function main () \r" +
+                "{\r" +
+                "var xd=1.5; // test\r" +
+                "var str=\"message\"\r" +
+                "};");
 
         String message = " ";
-        try
-        {
+        try {
             parser5.program();
         }
-        catch (ParserException e)
-        {
+        catch (ParserException e) {
             message = e.toString();
         }
         assertEquals("Expected SEMICOLON at line: 4.0, position: 1", message);
@@ -332,25 +333,29 @@ class ParserTest
 
     @Test
     void negativeTest() throws ParserException, FileNotFoundException {
-        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test.txt");
-        Parser parser = new Parser(file);
+        Parser parser = new Parser("function main () \r" +
+                "{\r" +
+                "var xd=1.a; // test\r" +
+                "var str=\"message\";\r" +
+                "};");
 
         String message = " ";
-        try
-        {
+        try {
             parser.program();
         }
-        catch (ParserException e)
-        {
+        catch (ParserException e) {
             message = e.toString();
         }
-        assertEquals("Unknown Token Type at line: 2.0, position: 10", message);
+        assertEquals("Wrong Token Type at line: 2.0, position: 10", message);
     }
 
     @Test
     void negativeTest1() throws ParserException, FileNotFoundException {
-        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test1.txt");
-        Parser parser = new Parser(file);
+        Parser parser = new Parser("function main () \r" +
+                "{\r" +
+                "var xd=1.5; // test\r" +
+                "var str=\"message;\r" +
+                "};");
 
         String message = " ";
         try
@@ -361,21 +366,23 @@ class ParserTest
         {
             message = e.toString();
         }
-        assertEquals("Unknown Token Type at line: 3.0, position: 17", message);
+        assertEquals("Wrong Token Type at line: 3.0, position: 17", message);
     }
 
     @Test
     void negativeTest2() throws ParserException, FileNotFoundException {
-        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test2.txt");
-        Parser parser = new Parser(file);
+        Parser parser = new Parser("function main () \r" +
+                "{\r" +
+                "var xd=1.5; // test\r" +
+                "var str=\"message\";\r" +
+                "x = 2 + 2 * 2  (7 + 1);\r" +
+                "};");
 
         String message = " ";
-        try
-        {
+        try {
             parser.program();
         }
-        catch (ParserException e)
-        {
+        catch (ParserException e) {
             message = e.toString();
         }
         assertEquals("Expected SEMICOLON at line: 4.0, position: 16", message);
@@ -383,18 +390,119 @@ class ParserTest
 
     @Test
     void negativeTest3() throws ParserException, FileNotFoundException {
-        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\test_files\\test3.txt");
-        Parser parser = new Parser(file);
-
+        Parser parser = new Parser("function main () \r" +
+                "{\r" +
+                "    var d=1.5; // test\r" +
+                "    var str=\"message\";\r" +
+                "    def kg 1000 g;\r" +
+                "};");
         String message = " ";
-        try
-        {
+        try {
             parser.program();
         }
-        catch (ParserException e)
-        {
+        catch (ParserException e) {
             message = e.toString();
         }
         assertEquals("Expected COLON at line: 4.0, position: 15", message);
+    }
+
+    @Test
+    void negativeTest4() throws ParserException, FileNotFoundException {
+        Parser parser = new Parser("function main(){\r" +
+                "if(){\r" +
+                "x = x + 1;\r" +
+                "};\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            parser.program();
+        }
+        catch (ParserException e) {
+            message = e.toString();
+        }
+        assertEquals("Statement is missing parameters at line: 1.0, position: 4", message);
+    }
+
+    @Test
+    void negativeTest5() throws ParserException, FileNotFoundException {
+        Parser parser = new Parser("function main(){\r" +
+                "var y = [13 kg;\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            parser.program();
+        }
+        catch (ParserException e) {
+            message = e.toString();
+        }
+        assertEquals("Expected RIGHT_BRACKET at line: 1.0, position: 15", message);
+    }
+
+    @Test
+    void negativeTest6() throws ParserException, FileNotFoundException {
+        Parser parser = new Parser("function main()\r" +
+                "var y = [13 kg];\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            parser.program();
+        }
+        catch (ParserException e) {
+            message = e.toString();
+        }
+        assertEquals("Expected LEFT_BRACE at line: 1.0, position: 3", message);
+    }
+
+    @Test
+    void negativeTest7() throws ParserException, FileNotFoundException {
+        Parser parser = new Parser("funct main(){\r" +
+                "var y = [13 kg];\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            parser.program();
+        }
+        catch (ParserException e) {
+            message = e.toString();
+        }
+        assertEquals("Expected function declaration at line: 0.0, position: 5", message);
+    }
+
+    @Test
+    void negativeTest8() throws ParserException, FileNotFoundException {
+        Parser parser = new Parser("function; main(){\r" +
+                "var y = [13 kg];\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            parser.program();
+        }
+        catch (ParserException e) {
+            message = e.toString();
+        }
+        assertEquals("Expected NAME at line: 0.0, position: 9", message);
+    }
+
+    @Test
+    void negativeTest9() throws ParserException, FileNotFoundException {
+        Parser parser = new Parser("function main(){\r" +
+                "if( 5 < 6 < 7 < 9 == 10 < ()){\r" +
+                "x = x + 1;\r" +
+                "};\r" +
+                "return y;\r" +
+                "}");
+        String message = " ";
+        try {
+            parser.program();
+        }
+        catch (ParserException e) {
+            message = e.toString();
+        }
+        assertEquals("Statement is missing parameters at line: 1.0, position: 28", message);
     }
 }
