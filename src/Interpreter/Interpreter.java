@@ -145,7 +145,7 @@ public class Interpreter
         AST var = varDeclaration.getName();
 
         if (environment.checkVar(var))
-            throw new InterpreterException("Variable already declared in this scope");
+            throw new InterpreterException("Variable already declared in this scope at line: "+ ((ASTnode.Variable)varDeclaration.getName()).getName().getY_coor());
 
         if (varDeclaration.getAssignmentValue() != null)
             varDeclaration.getAssignmentValue().accept(this);

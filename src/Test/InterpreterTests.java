@@ -663,13 +663,12 @@ public class InterpreterTests
         Parser parser = new Parser("function main(){" +
                 "var x = 5;" +
                 "var y = 4;" +
-                "x = x + y;" +
-                "print x;" +
+                "print x + y * x;" +
                 "}");
         Interpreter visitor = new Interpreter(parser.program());
         Object result = visitor.run();
         assertTrue(result instanceof ASTnode.IntNum);
-        assertEquals(9, ((ASTnode.IntNum) result).getValue().intValue());
+        assertEquals(25, ((ASTnode.IntNum) result).getValue().intValue());
     }
 
     @Test
@@ -1023,11 +1022,11 @@ public class InterpreterTests
     @Test
     public void WrongRedeclarationTest() throws  InterpreterException, ParserException
     {
-        Parser parser = new Parser("function main(){" +
-                "var y = 7.0;" +
-                "var x = 6.0;" +
-                "var x = 5.0;" +
-                "return y / x;" +
+        Parser parser = new Parser("function main(){\r" +
+                "var y = 7.0;\r" +
+                "var x = 6.0;\r" +
+                "var x = 5.0;\r" +
+                "return y / x;\r" +
                 "}");
         String message = " ";
         try {
@@ -1037,6 +1036,6 @@ public class InterpreterTests
         catch (InterpreterException e) {
             message = e.toString();
         }
-        assertEquals("Variable already declared in this scope", message);
+        assertEquals("Variable already declared in this scope at line: 3", message);
     }
 }
