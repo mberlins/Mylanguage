@@ -361,13 +361,19 @@ public class ASTnode
     public static class IntNum implements AST
     {
         Integer value;
+        int line;
         public IntNum(Token token)
         {
             this.value = token.getIntValue();
+            this.line = token.getY_coor();
         }
 
         public Integer getValue() {
             return value;
+        }
+
+        public int getLine() {
+            return line;
         }
 
         public void accept(Interpreter visitor)
@@ -379,13 +385,19 @@ public class ASTnode
     public static class DoubleNum implements AST
     {
         Double value;
+        int line;
         public DoubleNum(Token token)
         {
             this.value = token.getDoubleValue();
+            this.line = token.getY_coor();
         }
 
         public Double getValue() {
             return value;
+        }
+
+        public int getLine() {
+            return line;
         }
 
         public void accept(Interpreter visitor)
@@ -498,28 +510,28 @@ public class ASTnode
 
         public boolean equals(UnitResult unitResult) throws InterpreterException
         {
-            if (this.parentName.getValue() != unitResult.parentName.getValue()) throw new InterpreterException("Impossible to compare units from different dimensions");
+            if (!this.parentName.getValue().equals(unitResult.parentName.getValue())) throw new InterpreterException("Impossible to compare units from different dimensions");
 
             return (this.multiplicity * this.number) == (unitResult.getMultiplicity() * unitResult.getNumber());
         }
 
         public boolean isBigger(UnitResult unitResult) throws InterpreterException
         {
-            if (this.parentName.getValue() != unitResult.parentName.getValue()) throw new InterpreterException("Impossible to compare units from different dimensions");
+            if (!this.parentName.getValue().equals(unitResult.parentName.getValue())) throw new InterpreterException("Impossible to compare units from different dimensions");
 
             return (this.multiplicity * this.number) > (unitResult.getMultiplicity() * unitResult.getNumber());
         }
 
         public boolean isBiggerEqual(UnitResult unitResult) throws InterpreterException
         {
-            if (this.parentName.getValue() != unitResult.parentName.getValue()) throw new InterpreterException("Impossible to compare units from different dimensions");
+            if (!this.parentName.getValue().equals(unitResult.parentName.getValue())) throw new InterpreterException("Impossible to compare units from different dimensions");
 
             return (this.multiplicity * this.number) >= (unitResult.getMultiplicity() * unitResult.getNumber());
         }
 
         public boolean isSmallerEqual(UnitResult unitResult) throws InterpreterException
         {
-            if (this.parentName.getValue() != unitResult.parentName.getValue()) throw new InterpreterException("Impossible to compare units from different dimensions");
+            if (!this.parentName.getValue().equals(unitResult.parentName.getValue())) throw new InterpreterException("Impossible to compare units from different dimensions");
 
             return (this.multiplicity * this.number) <= (unitResult.getMultiplicity() * unitResult.getNumber());
         }

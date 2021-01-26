@@ -16,8 +16,8 @@ function main()
     def km: 1000 m;
     def mile: 1609 m;
     var x = 5;
-    var w = [2.9 mile];
-    var v = [3 mile];
+    var w = [3 mile];
+    var v = [4827 m];
     var y = 4 + x;
     x = 8;
     var z = 0;
@@ -27,7 +27,7 @@ function main()
     };
     y = foo(x, y);
 
-    if(w >= v)
+    if(w == v)
     {
         x = w + v;
     }

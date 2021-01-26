@@ -3,8 +3,7 @@ package Interpreter;
 public class InterpreterException extends Exception
 {
     String message;
-    int position;
-    double line;
+    int line;
 
     public InterpreterException(){};
     public InterpreterException(String message)

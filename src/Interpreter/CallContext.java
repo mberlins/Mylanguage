@@ -34,7 +34,7 @@ public class CallContext {
                 break;
             }
         }
-        if(tmp == null) throw new InterpreterException("Variable is not declared in this scope");
+        if(tmp == null) throw new InterpreterException("Variable " +((ASTnode.Variable) (name)).getName().getValue() + " is not declared in this scope");
     }
 
     public void declareVarInCurrentScope(AST name, AST value) throws InterpreterException
@@ -56,12 +56,12 @@ public class CallContext {
                 {
                     if (((ASTnode.StringVar)(localVariablesStack.get(localVariablesStack.size() - i).get(((ASTnode.Variable) (name)).getName().getValue()))).getValue() == null)
                     {
-                        throw new InterpreterException("Variable not initialized");
+                        throw new InterpreterException("Variable " + ((ASTnode.Variable) (name)).getName().getValue() + " is not initialized");
                     }
                 }
                 return tmp;
             }
         }
-        throw new InterpreterException("Variable is not declared in this scope");
+        throw new InterpreterException("Variable " + ((ASTnode.Variable) (name)).getName().getValue() + " is not declared in this scope");
     }
 }
