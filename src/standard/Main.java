@@ -14,7 +14,7 @@ public class Main
 {
     public static void main(String[] args) throws FileNotFoundException
     {
-        File file = new File("C:\\Users\\Admin\\IdeaProjects\\TKOM\\exampleTer.txt");
+        File file = new File("exampleTer.txt");
 
         AST p;
         Parser parser = new Parser(file);
@@ -26,7 +26,7 @@ public class Main
             AST wynik = (AST)interpreter.run();
             System.out.println("--------------");
             if(p.equals(null))
-                System.out.println("XD");
+                System.out.println("p equals null");
         }
         catch (ParserException | InterpreterException e)
         {
